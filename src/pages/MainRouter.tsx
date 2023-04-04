@@ -1,12 +1,12 @@
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
-import { HOME_URL, REGISTER_URL, LOGIN_URL } from '../lib/routes';
+import { FEED_URL, REGISTER_URL, LOGIN_URL } from '../lib/routes';
 import { PublicRoute } from '../components/PublicRoute/PublicRoute';
 import { Layout } from '../components/Layout/Layout';
-import { NotFoundPage } from '../pages/NotFoundPage/NotFoundPage';
+import { NotFoundPage } from './NotFoundPage/NotFoundPage';
 import { PrivateRoute } from '../components/PrivateRoute/PrivateRoute';
-import { FeedPage } from '../pages/FeedPage/FeedPage';
-import { RegisterPage } from '../pages/RegisterPage/RegisterPage';
-import { LoginPage } from '../pages/LoginPage/LoginPage';
+import { FeedPage } from './FeedPage/FeedPage';
+import { RegisterPage } from './RegisterPage/RegisterPage';
+import { LoginPage } from './LoginPage/LoginPage';
 
 export function MainRouter() {
   return (
@@ -14,7 +14,7 @@ export function MainRouter() {
       <Routes>
         <Route element={<Layout />}>
           <Route
-            path={HOME_URL}
+            path={FEED_URL}
             element={
               <PrivateRoute>
                 <FeedPage />
