@@ -36,6 +36,7 @@
     }
   },
   "rules": {
+    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
     "linebreak-style": "off",
     "prettier/prettier": [
       "error",
