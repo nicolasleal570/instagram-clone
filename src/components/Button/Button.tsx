@@ -10,7 +10,7 @@ export function Button({ children, ...buttonProps }: IButtonProps) {
     <>
       <button
         className={classNames(
-          'ml-2 h-10 rounded bg-indigo-400 px-6 text-white',
+          'ml-2 block h-10 w-full rounded bg-indigo-400 px-6 text-white',
           {
             'cursor-not-allowed bg-gray-400 text-gray-500': disabled,
             'cursor-pointer': !disabled,
