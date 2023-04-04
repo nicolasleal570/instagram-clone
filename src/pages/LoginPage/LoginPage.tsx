@@ -1,6 +1,6 @@
 import { useForm, Controller } from 'react-hook-form';
 import type { SubmitHandler } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ErrorMessage } from '@hookform/error-message';
 import { AtSymbolIcon } from '@heroicons/react/24/solid';
 import { LoginFormValues } from '../../types/LoginFormValues';
@@ -9,9 +9,13 @@ import { InputError } from '../../components/InputError/InputError';
 import { Button } from '../../components/Button/Button';
 import { loginSchema } from '../../lib/rules';
 import { joiResolver } from '@hookform/resolvers/joi';
-import { REGISTER_URL } from '../../lib/routes';
+import { FEED_URL, REGISTER_URL } from '../../lib/routes';
+import { useAuth } from '../../hooks/useAuth';
+import { NotificationKind, useNotify } from '../../hooks/useNotify';
+import { UserErrors, userErrors } from '../../lib/errors';
 
 export function LoginPage() {
+  const navigate = useNavigate();
   const {
     handleSubmit,
     control,
@@ -20,8 +24,24 @@ export function LoginPage() {
     resolver: joiResolver(loginSchema),
   });
 
-  const onSubmit: SubmitHandler<LoginFormValues> = (data) => {
-    console.log(data);
+  const { login } = useAuth();
+  const { notify } = useNotify();
+
+  const onSubmit: SubmitHandler<LoginFormValues> = async (data) => {
+    try {
+      const res = await login(data.username);
+
+      notify(NotificationKind.Success, `Hola de nuevo, ${res.name}!`);
+
+      navigate(FEED_URL);
+    } catch (error) {
+      if (error instanceof Error) {
+        notify(
+          NotificationKind.Error,
+          userErrors[error.message as keyof UserErrors](data.username)
+        );
+      }
+    }
   };
 
   return (
