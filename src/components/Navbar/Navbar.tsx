@@ -74,10 +74,10 @@ export function UserMenu() {
 }
 
 export function Navbar() {
-  const { isLoggedIn, currentUser } = useAuth();
+  const { isLoggedIn } = useAuth();
 
   return (
-    <nav className='mb-10 border-b border-gray-200 py-8'>
+    <nav className='border-b border-gray-200 py-8'>
       <div className='container flex w-full items-end justify-between md:items-center'>
         <div className='mr-6 flex w-full flex-col sm:w-auto sm:flex-row sm:items-center sm:justify-between md:mr-0'>
           <h1 className='mr-6 text-lg font-semibold md:text-2xl'>DTech Inc.</h1>
