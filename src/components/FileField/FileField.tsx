@@ -1,4 +1,4 @@
-import { ChangeEvent, ChangeEventHandler, useCallback, useState } from 'react';
+import { ChangeEvent, useCallback, useState } from 'react';
 import classNames from 'classnames';
 import { CameraIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { getBase64 } from '../../lib/utils';

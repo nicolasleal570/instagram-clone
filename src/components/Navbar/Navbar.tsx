@@ -4,14 +4,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import { LOGIN_URL, PROFILE_URL } from '../../lib/routes';
 import { NotificationKind, useNotify } from '../../hooks/useNotify';
 import { SearchBar } from '../SearchBar/SearchBar';
+import { usePost } from '../../hooks/usePost';
 
 export function UserMenu() {
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
+  const { setIsCreateModalOpen, postsByUser } = usePost();
   const { notify } = useNotify();
 
   const handleCreatePublication = () => {
-    console.log('CREATEEE');
+    setIsCreateModalOpen(true);
   };
 
   const handleLogout = async () => {
@@ -44,7 +46,9 @@ export function UserMenu() {
           <p className='border-b border-gray-200 p-4 font-semibold'>
             {currentUser?.name} {currentUser?.surname}
           </p>
-          <p className='border-b border-gray-200 p-4'>200 publicaciones</p>
+          <p className='border-b border-gray-200 p-4'>
+            {postsByUser.length} publicacion/es
+          </p>
 
           <ul className='space-y-4 border-b border-gray-200 py-4'>
             <li>

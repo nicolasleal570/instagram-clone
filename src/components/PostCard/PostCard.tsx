@@ -14,7 +14,10 @@ function PostWithImage({ post, handleLike }: IPostWithImageProps) {
   return (
     <div className=''>
       <div className='flex items-center px-2 py-4'>
-        <img src={post.author.avatar} className='h-10 w-10 rounded-full' />
+        <img
+          src={post.author.avatar}
+          className='h-10 w-10 rounded-full object-cover object-center'
+        />
         <p className='ml-2 flex items-center text-lg font-semibold'>
           {post.author.name} {post.author.surname}
           <span className='ml-4 mr-1 text-sm font-light text-gray-400'>
@@ -55,8 +58,11 @@ function PostWithImage({ post, handleLike }: IPostWithImageProps) {
 
 function PostWithMessage({ post, handleLike }: IPostWithImageProps) {
   return (
-    <div className='grid grid-cols-9 px-2 sm:px-0'>
-      <img src={post.author.avatar} className='h-10 w-10 rounded-full' />
+    <div className='grid grid-cols-9 px-2 pt-4'>
+      <img
+        src={post.author.avatar}
+        className='h-10 w-10 rounded-full object-cover object-center'
+      />
       <div className='col-span-8 w-full'>
         <div className='text-gray-800'>
           <p className='flex items-center text-lg font-semibold'>

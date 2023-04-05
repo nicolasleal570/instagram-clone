@@ -6,6 +6,8 @@ import { AuthContextProvider, SetupUser } from '../../contexts/AuthContext';
 import { Navbar } from '../Navbar/Navbar';
 
 import 'react-toastify/dist/ReactToastify.css';
+import { CreatePostModal } from '../CreatePostModal/CreatePostModal';
+import { usePost } from '../../hooks/usePost';
 
 export function CommonLayout() {
   return (
@@ -29,6 +31,7 @@ export function FeedLayout() {
       <Navbar />
       <main className='body'>
         <Outlet />
+        <CreatePostModal />
         <ToastContainer />
       </main>
     </>
