@@ -43,7 +43,10 @@ export function FileField({
     []
   );
 
-  const onDeleteImage = () => setImage('');
+  const onDeleteImage = () => {
+    setImage('');
+    onChange('');
+  };
 
   return (
     <>
