@@ -9,8 +9,14 @@ import { RegisterFormValues } from '../../types/RegisterFormValues';
 import { User } from '../../types/models';
 import { useAuth } from '../../hooks/useAuth';
 import { NotificationKind, useNotify } from '../../hooks/useNotify';
-import { UserErrors, userErrors } from '../../lib/errors';
+import {
+  USER_ALREADY_EXISTS,
+  UserErrors,
+  isUserError,
+  userErrors,
+} from '../../lib/errors';
 import { RegisterForm } from '../../components/RegisterForm/RegisterForm';
+import { uploadCloudinaryFile } from '../../services/cloudinary';
 
 export function RegisterPage() {
   const navigate = useNavigate();
@@ -20,19 +26,29 @@ export function RegisterPage() {
 
   const {
     handleSubmit,
-    formState: { isValid, isSubmitted },
+    setError,
+    formState: { isValid, isSubmitting, isSubmitted },
   } = methods;
 
   const { notify } = useNotify();
-  const { register } = useAuth();
+  const { register: signUp } = useAuth();
 
   const onSubmit: SubmitHandler<RegisterFormValues> = async (data) => {
     try {
+      let avatarUrl = '';
+
+      if (data.avatar) {
+        avatarUrl = await uploadCloudinaryFile(data.avatar);
+      } else {
+        avatarUrl = `https://ui-avatars.com/api/?name=${`${data.name}+${data.surname}`}`;
+      }
+
       const userData: User = {
         ...data,
+        avatar: avatarUrl,
       };
 
-      const res = await register(userData);
+      const res = await signUp(userData);
 
       notify(
         NotificationKind.Success,
@@ -41,12 +57,24 @@ export function RegisterPage() {
 
       navigate(FEED_URL);
     } catch (error) {
-      if (error instanceof Error) {
-        notify(
-          NotificationKind.Error,
-          userErrors[error.message as keyof UserErrors](data.username)
-        );
+      if (isUserError(error)) {
+        const formatError = error as Error;
+
+        if (formatError.message === USER_ALREADY_EXISTS) {
+          setError('username', {
+            message: userErrors[formatError.message as keyof UserErrors](
+              data.username
+            ),
+          });
+        }
+
+        return;
       }
+
+      notify(
+        NotificationKind.Error,
+        'Sucedió algo inesperado. Intenta de nuevo'
+      );
     }
   };
 
@@ -65,18 +93,23 @@ export function RegisterPage() {
           <RegisterForm />
 
           <div className='mt-6 flex justify-center'>
-            <Button type='submit' disabled={!isValid && isSubmitted}>
+            <Button
+              type='submit'
+              disabled={(!isValid && isSubmitted) || isSubmitting}
+            >
               Entrar
             </Button>
           </div>
 
-          <Link
-            to={LOGIN_URL}
-            className='mt-4 block text-center text-sm text-slate-600'
-          >
-            Ya tienes una cuenta?{' '}
-            <span className='text-indigo-500'>Inicia sesión aquí</span>
-          </Link>
+          {!isSubmitting && (
+            <Link
+              to={LOGIN_URL}
+              className='mt-4 block text-center text-sm text-slate-600'
+            >
+              Ya tienes una cuenta?{' '}
+              <span className='text-indigo-500'>Inicia sesión aquí</span>
+            </Link>
+          )}
         </form>
       </div>
     </FormProvider>
