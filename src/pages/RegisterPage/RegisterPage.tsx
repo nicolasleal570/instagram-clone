@@ -92,13 +92,20 @@ export function RegisterPage() {
 
           <RegisterForm />
 
-          <div className='mt-6 flex justify-center'>
+          <div className='mt-6 flex flex-col justify-center'>
             <Button
               type='submit'
               disabled={(!isValid && isSubmitted) || isSubmitting}
             >
               Entrar
             </Button>
+
+            <Link
+              to={FEED_URL}
+              className='mt-3 block w-full rounded border border-indigo-500 px-4 py-2 text-center text-sm text-indigo-500'
+            >
+              Volver al feed
+            </Link>
           </div>
 
           {!isSubmitting && (

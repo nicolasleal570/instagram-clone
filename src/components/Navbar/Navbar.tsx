@@ -1,10 +1,9 @@
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { Popover } from '@headlessui/react';
 import { useAuth } from '../../hooks/useAuth';
-import { InputField } from '../InputField/InputField';
 import { Link, useNavigate } from 'react-router-dom';
 import { LOGIN_URL, PROFILE_URL } from '../../lib/routes';
 import { NotificationKind, useNotify } from '../../hooks/useNotify';
+import { SearchBar } from '../SearchBar/SearchBar';
 
 export function UserMenu() {
   const navigate = useNavigate();
@@ -32,7 +31,7 @@ export function UserMenu() {
 
   return (
     <Popover className='relative'>
-      <Popover.Button className='block h-10 w-10'>
+      <Popover.Button className='block h-14 w-14 overflow-hidden rounded border border-gray-100'>
         <img
           className='h-full w-full rounded object-cover object-center'
           src={currentUser?.avatar}
@@ -40,7 +39,7 @@ export function UserMenu() {
       </Popover.Button>
       <Popover.Overlay className='fixed inset-0 h-screen w-full bg-black opacity-30' />
 
-      <Popover.Panel className='absolute right-0 z-10 block min-w-[200px] rounded border border-gray-200 bg-white'>
+      <Popover.Panel className='absolute right-0 z-10 mt-2 block min-w-[200px] rounded border border-gray-200 bg-white'>
         <div className='grid grid-cols-1 text-sm'>
           <p className='border-b border-gray-200 p-4 font-semibold'>
             {currentUser?.name} {currentUser?.surname}
@@ -50,12 +49,16 @@ export function UserMenu() {
           <ul className='space-y-4 border-b border-gray-200 py-4'>
             <li>
               <Link to={PROFILE_URL}>
-                <p className='px-4'>Perfil</p>
+                <p className='px-4 text-gray-800 hover:text-indigo-500'>
+                  Perfil
+                </p>
               </Link>
             </li>
             <li>
               <button type='button' onClick={handleCreatePublication}>
-                <p className='px-4'>Crear</p>
+                <p className='px-4 text-gray-800 hover:text-indigo-500'>
+                  Crear
+                </p>
               </button>
             </li>
           </ul>
@@ -77,19 +80,36 @@ export function Navbar() {
   const { isLoggedIn } = useAuth();
 
   return (
-    <nav className='border-b border-gray-200 py-8'>
-      <div className='container flex w-full items-end justify-between md:items-center'>
-        <div className='mr-6 flex w-full flex-col sm:w-auto sm:flex-row sm:items-center sm:justify-between md:mr-0'>
+    <>
+      <nav className='border-b border-gray-200 py-8'>
+        <div className='container grid w-full grid-cols-2 md:grid-cols-3 md:items-center'>
           <h1 className='mr-6 text-lg font-semibold md:text-2xl'>DTech Inc.</h1>
-          <InputField
-            type='text'
-            name='search'
-            leadIcon={<MagnifyingGlassIcon className='h-5 w-5 text-inherit' />}
-          />
-        </div>
 
-        {!isLoggedIn ? <div>No user</div> : <UserMenu />}
+          <div className='hidden w-full md:block xl:mx-auto xl:w-[400px]'>
+            <SearchBar />
+          </div>
+
+          <div className='ml-auto'>
+            {!isLoggedIn ? (
+              <div className='flex items-center'>
+                <Link
+                  to={LOGIN_URL}
+                  className='flex h-10 cursor-pointer items-center rounded border border-indigo-500 px-6 font-semibold text-indigo-500 hover:bg-indigo-600 hover:text-white'
+                >
+                  Entrar
+                </Link>
+              </div>
+            ) : (
+              <UserMenu />
+            )}
+          </div>
+        </div>
+      </nav>
+      <div className='block w-full border-b border-gray-200 py-4 md:hidden'>
+        <div className='container'>
+          <SearchBar />
+        </div>
       </div>
-    </nav>
+    </>
   );
 }
