@@ -66,6 +66,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     }
 
     await setUserSession(user);
+    await setupCurrentUser();
     return user;
   };
 
