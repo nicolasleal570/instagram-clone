@@ -1,19 +1,36 @@
 import { Outlet } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { UserContextProvider } from '../../contexts/UserContext';
-import { AuthContextProvider } from '../../contexts/AuthContext';
+import { PostContextProvider } from '../../contexts/PostContext';
+import { AuthContextProvider, SetupUser } from '../../contexts/AuthContext';
+import { Navbar } from '../Navbar/Navbar';
 
 import 'react-toastify/dist/ReactToastify.css';
 
-export function Layout() {
+export function CommonLayout() {
   return (
     <UserContextProvider>
       <AuthContextProvider>
-        <main className='body'>
-          <Outlet />
-          <ToastContainer />
-        </main>
+        <PostContextProvider>
+          <main className='body'>
+            <Outlet />
+            <SetupUser />
+            <ToastContainer />
+          </main>
+        </PostContextProvider>
       </AuthContextProvider>
     </UserContextProvider>
+  );
+}
+
+export function FeedLayout() {
+  return (
+    <>
+      <Navbar />
+      <main className='body'>
+        <Outlet />
+        <ToastContainer />
+      </main>
+    </>
   );
 }

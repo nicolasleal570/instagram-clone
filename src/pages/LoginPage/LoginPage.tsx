@@ -63,55 +63,63 @@ export function LoginPage() {
   };
 
   return (
-    <div className='container grid h-screen w-full grid-cols-1 place-content-center px-8 md:mx-auto md:max-w-[400px]'>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <h1 className='mb-2 block w-full text-center text-4xl font-semibold text-slate-900'>
-          Digital Tech Inc.
-        </h1>
+    <>
+      <div className='container grid h-screen w-full grid-cols-1 place-content-center md:mx-auto md:max-w-[400px]'>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <h1 className='mb-2 block w-full text-center text-4xl font-semibold text-slate-900'>
+            Digital Tech Inc.
+          </h1>
 
-        <p className='mb-10 block w-full text-center text-sm text-slate-600'>
-          Bienvenido! Ingresa utilizando tu nombre de usuario
-        </p>
+          <p className='mb-10 block w-full text-center text-sm text-slate-600'>
+            Bienvenido! Ingresa utilizando tu nombre de usuario
+          </p>
 
-        <Controller
-          control={control}
-          name='username'
-          render={({ field: { value, name, onChange } }) => (
-            <>
-              <InputField
-                name={name}
-                value={value ?? ''}
-                onChange={onChange}
-                hasErrors={!!errors.username?.message}
-                placeholder='john_doe23'
-                leadIcon={<AtSymbolIcon className='h-5 w-5 text-inherit' />}
-                disabled={isSubmitting}
-              />
-              <ErrorMessage
-                errors={errors}
-                name={name}
-                render={({ message }) => <InputError message={message} />}
-              />
-            </>
+          <Controller
+            control={control}
+            name='username'
+            render={({ field: { value, name, onChange } }) => (
+              <>
+                <InputField
+                  name={name}
+                  value={value ?? ''}
+                  onChange={onChange}
+                  hasErrors={!!errors.username?.message}
+                  placeholder='john_doe23'
+                  leadIcon={<AtSymbolIcon className='h-5 w-5 text-inherit' />}
+                  disabled={isSubmitting}
+                />
+                <ErrorMessage
+                  errors={errors}
+                  name={name}
+                  render={({ message }) => <InputError message={message} />}
+                />
+              </>
+            )}
+          />
+
+          <div className='mt-6 flex flex-col justify-center'>
+            <Button type='submit' disabled={!isValid && isSubmitted}>
+              Entrar
+            </Button>
+            <Link
+              to={FEED_URL}
+              className='mt-3 block w-full rounded border border-indigo-500 px-4 py-2 text-center text-sm text-indigo-500'
+            >
+              Volver al feed
+            </Link>
+          </div>
+
+          {!isSubmitting && (
+            <Link
+              to={REGISTER_URL}
+              className='mt-4 block text-center text-sm text-slate-600'
+            >
+              ¿No tienes una cuenta?{' '}
+              <span className='text-indigo-500'>Regístarte aquí</span>
+            </Link>
           )}
-        />
-
-        <div className='mt-6 flex justify-center'>
-          <Button type='submit' disabled={!isValid && isSubmitted}>
-            Entrar
-          </Button>
-        </div>
-
-        {!isSubmitting && (
-          <Link
-            to={REGISTER_URL}
-            className='mt-4 block text-center text-sm text-slate-600'
-          >
-            ¿No tienes una cuenta?{' '}
-            <span className='text-indigo-500'>Regístarte aquí</span>
-          </Link>
-        )}
-      </form>
-    </div>
+        </form>
+      </div>
+    </>
   );
 }
