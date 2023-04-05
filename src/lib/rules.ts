@@ -37,4 +37,5 @@ export const registerSchema = loginSchema.keys({
     'string.max': 'Debes ingresar un apellido de máximo 20 caracteres',
     'any.required': 'Debes ingresar un apellido  válido',
   }),
+  avatar: Joi.string().allow(''),
 });

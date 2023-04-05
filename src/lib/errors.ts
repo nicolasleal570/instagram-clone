@@ -10,3 +10,9 @@ export const userErrors: UserErrors = {
   [USER_ALREADY_EXISTS]: (username = '') =>
     `El nombre de usuario "${username}" ya existe`,
 };
+
+export function isUserError(error: unknown) {
+  return (
+    error instanceof Error && Object.keys(userErrors).includes(error.message)
+  );
+}

@@ -12,14 +12,20 @@ import { joiResolver } from '@hookform/resolvers/joi';
 import { FEED_URL, REGISTER_URL } from '../../lib/routes';
 import { useAuth } from '../../hooks/useAuth';
 import { NotificationKind, useNotify } from '../../hooks/useNotify';
-import { UserErrors, userErrors } from '../../lib/errors';
+import {
+  USER_NOT_FOUND,
+  UserErrors,
+  isUserError,
+  userErrors,
+} from '../../lib/errors';
 
 export function LoginPage() {
   const navigate = useNavigate();
   const {
     handleSubmit,
+    setError,
     control,
-    formState: { errors, isValid, isSubmitted },
+    formState: { errors, isValid, isSubmitted, isSubmitting },
   } = useForm<LoginFormValues>({
     resolver: joiResolver(loginSchema),
   });
@@ -35,12 +41,24 @@ export function LoginPage() {
 
       navigate(FEED_URL);
     } catch (error) {
-      if (error instanceof Error) {
-        notify(
-          NotificationKind.Error,
-          userErrors[error.message as keyof UserErrors](data.username)
-        );
+      if (isUserError(error)) {
+        const formatError = error as Error;
+
+        if (formatError.message === USER_NOT_FOUND) {
+          setError('username', {
+            message: userErrors[formatError.message as keyof UserErrors](
+              data.username
+            ),
+          });
+        }
+
+        return;
       }
+
+      notify(
+        NotificationKind.Error,
+        'Sucedió algo inesperado. Intenta de nuevo'
+      );
     }
   };
 
@@ -67,6 +85,7 @@ export function LoginPage() {
                 hasErrors={!!errors.username?.message}
                 placeholder='john_doe23'
                 leadIcon={<AtSymbolIcon className='h-5 w-5 text-inherit' />}
+                disabled={isSubmitting}
               />
               <ErrorMessage
                 errors={errors}
@@ -83,13 +102,15 @@ export function LoginPage() {
           </Button>
         </div>
 
-        <Link
-          to={REGISTER_URL}
-          className='mt-4 block text-center text-sm text-slate-600'
-        >
-          ¿No tienes una cuenta?{' '}
-          <span className='text-indigo-500'>Regístarte aquí</span>
-        </Link>
+        {!isSubmitting && (
+          <Link
+            to={REGISTER_URL}
+            className='mt-4 block text-center text-sm text-slate-600'
+          >
+            ¿No tienes una cuenta?{' '}
+            <span className='text-indigo-500'>Regístarte aquí</span>
+          </Link>
+        )}
       </form>
     </div>
   );

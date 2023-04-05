@@ -20,17 +20,17 @@ export function InputField({
       )}
       <input
         type='text'
-        id='website-admin'
         className={classNames(
-          'block h-10 w-full min-w-0 flex-1 cursor-pointer bg-white text-sm font-normal leading-6 shadow-sm ring-0 ring-offset-0 placeholder:text-gray-400 focus:ring-0',
+          'block h-10 w-full min-w-0 flex-1 text-sm font-normal leading-6 shadow-sm ring-0 ring-offset-0 placeholder:text-gray-400 focus:ring-0',
           {
-            'border border-gray-300 text-gray-900': !hasErrors,
+            'cursor-pointer border border-gray-300 bg-white text-gray-900':
+              !hasErrors && !inputProps.disabled,
             'border border-red-300 text-red-500 placeholder:text-red-300':
               hasErrors,
-            'cursor-not-allowed border border-gray-300 text-gray-400':
+            'cursor-not-allowed border border-gray-300 bg-gray-200 text-gray-500  ':
               inputProps.disabled,
             'rounded px-2.5 py-3 ': !leadIcon,
-            'rounded-md py-3 pl-[55px] pr-2.5': !!leadIcon,
+            'rounded rounded-l-md py-3 pl-[55px] pr-2.5': !!leadIcon,
           }
         )}
         {...inputProps}
