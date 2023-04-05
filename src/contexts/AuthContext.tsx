@@ -4,6 +4,8 @@ import {
   createContext,
   ReactNode,
   useCallback,
+  useContext,
+  memo,
 } from 'react';
 import { useLocalStore } from '../hooks/useLocalStorage';
 import { User } from '../types/models';
@@ -13,8 +15,12 @@ import { useUsers } from '../hooks/useUser';
 
 export interface AuthContextType {
   currentUser?: User;
+  isLoggedIn: boolean;
+  isLoadingUser: boolean;
   register: (user: User) => Promise<User>;
   login: (username: string) => Promise<User>;
+  logout: () => Promise<void>;
+  setupCurrentUser: () => Promise<User | undefined>;
 }
 
 interface AuthContextProviderProps {
@@ -24,6 +30,7 @@ interface AuthContextProviderProps {
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthContextProvider({ children }: AuthContextProviderProps) {
+  const [isLoadingUser, setIsLoadingUser] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<User>();
   const { users } = useUsers();
   const { setData: updateUsers } = useLocalStore<User[]>(USERS_TABLE);
@@ -31,8 +38,10 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     useLocalStore<User>(AUTH_TABLE);
 
   const setupCurrentUser = async () => {
+    setIsLoadingUser(true);
     const auth = await getUserSession();
     setCurrentUser(auth);
+    setIsLoadingUser(false);
     return auth;
   };
 
@@ -45,6 +54,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   );
 
   const register = async (user: User): Promise<User> => {
+    setIsLoadingUser(true);
     if (findUserByUsername(user.username)) {
       throw new Error(USER_ALREADY_EXISTS);
     }
@@ -55,34 +65,61 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     await setUserSession(user);
     await setupCurrentUser();
 
+    setIsLoadingUser(false);
+
     return user;
   };
 
   const login = async (username: string): Promise<User> => {
+    setIsLoadingUser(true);
     const user = findUserByUsername(username);
 
     if (!user) {
+      setIsLoadingUser(false);
       throw new Error(USER_NOT_FOUND);
     }
 
     await setUserSession(user);
     await setupCurrentUser();
+    setIsLoadingUser(false);
     return user;
   };
 
-  useEffect(() => {
-    void setupCurrentUser();
-  }, []);
+  const logout = async () => {
+    setIsLoadingUser(true);
+
+    await setUserSession();
+
+    setCurrentUser(undefined);
+
+    setIsLoadingUser(false);
+  };
 
   return (
     <AuthContext.Provider
       value={{
         currentUser,
+        isLoggedIn: !!currentUser?.username,
+        isLoadingUser,
         register,
         login,
+        logout,
+        setupCurrentUser,
       }}
     >
       {children}
     </AuthContext.Provider>
   );
 }
+
+export const SetupUser = memo(function () {
+  const { setupCurrentUser } = useContext(AuthContext) as AuthContextType;
+
+  useEffect(() => {
+    void setupCurrentUser();
+  }, []);
+
+  return <></>;
+});
+
+SetupUser.displayName = 'SetupUser';

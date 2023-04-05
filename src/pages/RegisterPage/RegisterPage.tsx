@@ -80,7 +80,7 @@ export function RegisterPage() {
 
   return (
     <FormProvider {...methods}>
-      <div className='container grid h-screen w-full grid-cols-1 place-content-center px-8 md:mx-auto md:max-w-[400px]'>
+      <div className='container grid h-screen w-full grid-cols-1 place-content-center md:mx-auto md:max-w-[400px]'>
         <form onSubmit={handleSubmit(onSubmit)}>
           <h1 className='mb-2 block w-full text-center text-4xl font-semibold text-slate-900'>
             Digital Tech Inc.

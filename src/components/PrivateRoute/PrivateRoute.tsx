@@ -8,7 +8,9 @@ interface IPrivateRouteProps {
 }
 
 export function PrivateRoute({ children }: IPrivateRouteProps) {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, isLoadingUser } = useAuth();
+
+  if (isLoadingUser) return <></>;
 
   if (!isLoggedIn) {
     return <Navigate to={LOGIN_URL} />;

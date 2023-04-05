@@ -8,9 +8,11 @@ interface IPublicRouteProps {
 }
 
 export function PublicRoute({ children }: IPublicRouteProps) {
-  const { isLoggedIn } = useAuth();
+  const { currentUser, isLoadingUser } = useAuth();
 
-  if (isLoggedIn) {
+  if (isLoadingUser) return <></>;
+
+  if (currentUser?.username && !isLoadingUser) {
     return <Navigate to={FEED_URL} />;
   }
 

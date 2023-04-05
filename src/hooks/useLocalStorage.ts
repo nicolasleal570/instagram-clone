@@ -9,7 +9,12 @@ export function useLocalStore<T>(key: string) {
     return Promise.resolve(data);
   };
 
-  const setData = (data: T) => {
+  const setData = (data?: T) => {
+    if (!data) {
+      localStorage.removeItem(key);
+      return;
+    }
+
     const newData = localStorage.setItem(key, JSON.stringify(data));
 
     return Promise.resolve(newData);
