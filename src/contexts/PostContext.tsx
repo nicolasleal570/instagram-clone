@@ -17,6 +17,7 @@ export interface PostContextType {
   currentUserPosts: Post[];
   isCreateModalOpen: boolean;
   editPost: Post | undefined;
+  setPosts: React.Dispatch<React.SetStateAction<Post[]>>;
   setIsCreateModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setEditPost: React.Dispatch<React.SetStateAction<Post | undefined>>;
   createPost: (
@@ -190,6 +191,7 @@ export function PostContextProvider({ children }: PostContextProviderProps) {
         currentUserPosts,
         isCreateModalOpen,
         editPost,
+        setPosts,
         getPostsByUser,
         getAllPosts,
         setIsCreateModalOpen,

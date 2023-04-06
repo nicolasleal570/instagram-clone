@@ -7,6 +7,7 @@ import { PostModal } from '../PostModal/PostModal';
 import { Navbar } from '../Navbar/Navbar';
 
 import 'react-toastify/dist/ReactToastify.css';
+import { useGenerateRandomData } from '../../hooks/useGenerateRandomData';
 
 export function CommonLayout() {
   return (
@@ -26,6 +27,8 @@ export function CommonLayout() {
 }
 
 export function FeedLayout() {
+  useGenerateRandomData();
+
   return (
     <>
       <Navbar />
