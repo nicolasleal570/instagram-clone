@@ -21,7 +21,7 @@ export interface PostContextType {
   setIsCreateModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setEditPost: React.Dispatch<React.SetStateAction<Post | undefined>>;
   createPost: (
-    post: Pick<Post, 'image' | 'message' | 'location'>
+    post: Pick<Post, 'image' | 'message' | 'location' | 'status'>
   ) => Promise<Post | undefined>;
   updatePost: (oldPost: Post, newData: Post) => Promise<Post | undefined>;
   getAllPosts: () => Promise<Post[]>;
@@ -67,7 +67,7 @@ export function PostContextProvider({ children }: PostContextProviderProps) {
   );
 
   const createPost = async (
-    post: Pick<Post, 'image' | 'message' | 'location'>
+    post: Pick<Post, 'image' | 'message' | 'location' | 'status'>
   ) => {
     if (!currentUser) return;
 
@@ -77,7 +77,6 @@ export function PostContextProvider({ children }: PostContextProviderProps) {
       create_at: new Date().toISOString(),
       author: currentUser,
       likes: [],
-      status: 'drafted',
     };
 
     const newPosts = [postData, ...posts].sort(
