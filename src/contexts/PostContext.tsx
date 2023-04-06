@@ -145,8 +145,11 @@ export function PostContextProvider({ children }: PostContextProviderProps) {
       setCurrentUserPosts(
         posts.filter((item) => item.author.username === currentUser.username)
       );
+      return;
     }
-  }, [posts]);
+
+    setCurrentUserPosts([]);
+  }, [posts, currentUser]);
 
   return (
     <PostContext.Provider

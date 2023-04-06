@@ -83,10 +83,11 @@ function PostWithImage({ post, handleLike, haveLike }: IPostWithImageProps) {
       <div className='px-2 pt-2 text-gray-800 sm:px-0'>
         <button
           type='button'
-          className='flex items-center'
+          className='flex cursor-pointer items-center text-red-400 disabled:cursor-not-allowed disabled:text-gray-400'
           onClick={handleLike}
+          disabled={post.status !== 'published'}
         >
-          <HeartIcon className='h-6 w-6 text-red-400' />
+          <HeartIcon className='h-6 w-6 text-inherit' />
         </button>
         <p className='block py-2 text-sm font-semibold'>
           {post.likes?.length} Likes
@@ -140,10 +141,11 @@ function PostWithMessage({ post, handleLike, haveLike }: IPostWithImageProps) {
         <div className='mt-4  w-full'>
           <button
             type='button'
-            className='flex items-center'
+            className='flex cursor-pointer items-center text-red-400 disabled:cursor-not-allowed disabled:text-gray-400'
             onClick={handleLike}
+            disabled={post.status !== 'published'}
           >
-            <HeartIcon className='h-6 w-6 text-red-400' />
+            <HeartIcon className='h-6 w-6 text-inherit' />
             <p className='ml-2 text-gray-800'>{post.likes?.length}</p>
           </button>
         </div>
@@ -171,6 +173,8 @@ export function PostCard({ post }: IPostCardProps) {
       navigate(LOGIN_URL);
       return;
     }
+
+    if (post.status !== 'published') return;
 
     if (!haveLike) {
       await addLike(post);
