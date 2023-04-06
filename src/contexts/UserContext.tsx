@@ -5,6 +5,7 @@ import { USERS_TABLE } from '../lib/db';
 
 export interface UserContextType {
   users: User[];
+  setUsers: React.Dispatch<React.SetStateAction<User[]>>;
 }
 
 interface UserContextProviderProps {
@@ -30,6 +31,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     <UserContext.Provider
       value={{
         users,
+        setUsers,
       }}
     >
       {children}
