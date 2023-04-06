@@ -1,4 +1,10 @@
-import { useEffect, useState, createContext, ReactNode, useMemo } from 'react';
+import {
+  useEffect,
+  useState,
+  createContext,
+  ReactNode,
+  useCallback,
+} from 'react';
 import { useLocalStore } from '../hooks/useLocalStorage';
 import { Post } from '../types/models';
 import { POSTS_TABLE } from '../lib/db';
@@ -6,12 +12,12 @@ import { useAuth } from '../hooks/useAuth';
 
 export interface PostContextType {
   posts: Post[];
-  postsByUser: Post[];
   isCreateModalOpen: boolean;
   setIsCreateModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   createPost: (
     post: Pick<Post, 'image' | 'message' | 'location'>
   ) => Promise<Post | undefined>;
+  getPostsByUser: (username?: string, includeAll?: boolean) => Promise<Post[]>;
 }
 
 interface PostContextProviderProps {
@@ -26,9 +32,25 @@ export function PostContextProvider({ children }: PostContextProviderProps) {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
   const { getData, setData } = useLocalStore<Post[]>(POSTS_TABLE);
 
-  const postsByUser = useMemo(
-    () =>
-      posts.filter((post) => post.author.username === currentUser?.username),
+  const getPostsByUser = useCallback(
+    async (username = currentUser?.username, includeAll = false) => {
+      let allPosts: Post[] = [...posts];
+
+      if (allPosts.length === 0) {
+        const data = (await getData()) ?? [];
+        allPosts = data;
+      }
+
+      const filteredPosts = allPosts.filter(
+        (post) => post.author.username === username
+      );
+
+      if (username === currentUser?.username || includeAll) {
+        return filteredPosts;
+      }
+
+      return filteredPosts.filter((post) => post.status === 'published');
+    },
     [posts, currentUser]
   );
 
@@ -66,6 +88,8 @@ export function PostContextProvider({ children }: PostContextProviderProps) {
           Date.parse(b.create_at as string) - Date.parse(a.create_at as string)
       )
     );
+
+    return data;
   };
 
   useEffect(() => {
@@ -78,7 +102,7 @@ export function PostContextProvider({ children }: PostContextProviderProps) {
     <PostContext.Provider
       value={{
         posts,
-        postsByUser,
+        getPostsByUser,
         isCreateModalOpen,
         setIsCreateModalOpen,
         createPost,

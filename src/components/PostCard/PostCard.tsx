@@ -1,6 +1,8 @@
 import { HeartIcon } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 import { Post } from '../../types/models';
+import { Link } from 'react-router-dom';
+import { PROFILE_URL } from '../../lib/routes';
 
 interface IPostCardProps {
   post: Post;
@@ -10,7 +12,30 @@ interface IPostWithImageProps extends IPostCardProps {
   handleLike: () => void;
 }
 
+const getClassByPostStatus = (
+  status: 'published' | 'drafted' | 'deleted'
+): { class: string; label: string } => {
+  const statusToText = {
+    published: {
+      label: 'Publicado',
+      class: 'hidden',
+    },
+    drafted: {
+      label: 'Borrador',
+      class: 'text-yellow-600 bg-yellow-200 px-3 py-1 rounded-full',
+    },
+    deleted: {
+      label: 'Eliminado',
+      class: 'text-red-600 bg-red-200 px-3 py-1 rounded-full',
+    },
+  };
+
+  return statusToText[status];
+};
+
 function PostWithImage({ post, handleLike }: IPostWithImageProps) {
+  const status = getClassByPostStatus(post.status);
+
   return (
     <div className=''>
       <div className='flex items-center px-2 py-4'>
@@ -18,15 +43,27 @@ function PostWithImage({ post, handleLike }: IPostWithImageProps) {
           src={post.author.avatar}
           className='h-10 w-10 rounded-full object-cover object-center'
         />
-        <p className='ml-2 flex items-center text-lg font-semibold'>
-          {post.author.name} {post.author.surname}
-          <span className='ml-4 mr-1 text-sm font-light text-gray-400'>
-            @{post.author.username} •
-          </span>
-          <span className='text-sm font-light text-gray-400'>
-            {dayjs(post.create_at).fromNow()}
-          </span>
-        </p>
+
+        <Link
+          to={PROFILE_URL(post.author.username)}
+          className='flex w-full items-center'
+        >
+          <p className='ml-2 flex items-center text-lg font-semibold'>
+            {post.author.name} {post.author.surname}
+            <span className='ml-4 mr-1 text-sm font-light text-gray-400'>
+              @{post.author.username} •
+            </span>
+            <span className='text-sm font-light text-gray-400'>
+              {dayjs(post.create_at).fromNow()}
+            </span>
+          </p>
+
+          <p
+            className={`my-3 ml-auto inline-block text-xs md:my-0 ${status.class}`}
+          >
+            {status.label}
+          </p>
+        </Link>
       </div>
 
       <div className='max-h-[585px] w-full overflow-hidden'>
@@ -57,6 +94,8 @@ function PostWithImage({ post, handleLike }: IPostWithImageProps) {
 }
 
 function PostWithMessage({ post, handleLike }: IPostWithImageProps) {
+  const status = getClassByPostStatus(post.status);
+
   return (
     <div className='grid grid-cols-9 px-2 pt-4'>
       <img
@@ -65,15 +104,25 @@ function PostWithMessage({ post, handleLike }: IPostWithImageProps) {
       />
       <div className='col-span-8 w-full'>
         <div className='text-gray-800'>
-          <p className='flex items-center text-lg font-semibold'>
-            {post.author.name} {post.author.surname}
-            <span className='ml-4 mr-1 text-sm font-light text-gray-400'>
-              @{post.author.username} •
-            </span>
-            <span className='text-sm font-light text-gray-400'>
-              {dayjs(post.create_at).fromNow()}
-            </span>
-          </p>
+          <Link
+            to={PROFILE_URL(post.author.username)}
+            className='flex w-full flex-col items-center md:flex-row'
+          >
+            <p className='flex items-center text-lg font-semibold'>
+              {post.author.name} {post.author.surname}
+              <span className='ml-4 mr-1 text-sm font-light text-gray-400'>
+                @{post.author.username} •
+              </span>
+              <span className='text-sm font-light text-gray-400'>
+                {dayjs(post.create_at).fromNow()}
+              </span>
+            </p>
+            <p
+              className={`my-3 ml-auto inline-block text-xs md:my-0 ${status.class}`}
+            >
+              {status.label}
+            </p>
+          </Link>
         </div>
         <p className='text-justify text-sm leading-relaxed text-gray-800'>
           {post.message}

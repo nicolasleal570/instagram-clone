@@ -19,7 +19,7 @@ export function Button({
           'cursor-not-allowed bg-gray-300 text-gray-500': disabled,
           'cursor-pointer bg-indigo-500 text-white hover:bg-indigo-600':
             !disabled && kind === 'primary',
-          'cursor-pointer border border-indigo-500 text-indigo-500 hover:bg-indigo-600':
+          'cursor-pointer border border-indigo-500 text-indigo-500 hover:bg-indigo-600 hover:text-white':
             !disabled && kind === 'secondary',
         })}
         {...buttonProps}

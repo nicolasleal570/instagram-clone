@@ -1,7 +1,7 @@
 import { Popover } from '@headlessui/react';
 import { useAuth } from '../../hooks/useAuth';
 import { Link, useNavigate } from 'react-router-dom';
-import { LOGIN_URL, PROFILE_URL } from '../../lib/routes';
+import { FEED_URL, LOGIN_URL, MY_PROFILE_URL } from '../../lib/routes';
 import { NotificationKind, useNotify } from '../../hooks/useNotify';
 import { SearchBar } from '../SearchBar/SearchBar';
 import { usePost } from '../../hooks/usePost';
@@ -9,7 +9,7 @@ import { usePost } from '../../hooks/usePost';
 export function UserMenu() {
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
-  const { setIsCreateModalOpen, postsByUser } = usePost();
+  const { setIsCreateModalOpen, getPostsByUser } = usePost();
   const { notify } = useNotify();
 
   const handleCreatePublication = () => {
@@ -41,31 +41,20 @@ export function UserMenu() {
       </Popover.Button>
       <Popover.Overlay className='fixed inset-0 h-screen w-full bg-black opacity-30' />
 
-      <Popover.Panel className='absolute right-0 z-10 mt-2 block min-w-[200px] rounded border border-gray-200 bg-white'>
+      <Popover.Panel className='absolute right-0 z-50 mt-2 block min-w-[200px] rounded border border-gray-200 bg-white'>
         <div className='grid grid-cols-1 text-sm'>
           <p className='border-b border-gray-200 p-4 font-semibold'>
             {currentUser?.name} {currentUser?.surname}
           </p>
-          <p className='border-b border-gray-200 p-4'>
-            {postsByUser.length} publicacion/es
-          </p>
 
-          <ul className='space-y-4 border-b border-gray-200 py-4'>
-            <li>
-              <Link to={PROFILE_URL}>
-                <p className='px-4 text-gray-800 hover:text-indigo-500'>
-                  Perfil
-                </p>
-              </Link>
-            </li>
-            <li>
-              <button type='button' onClick={handleCreatePublication}>
-                <p className='px-4 text-gray-800 hover:text-indigo-500'>
-                  Crear
-                </p>
-              </button>
-            </li>
-          </ul>
+          <div className='space-y-4 border-b border-gray-200 py-4'>
+            <Popover.Button as={Link} to={MY_PROFILE_URL} className='block'>
+              <p className='px-4 text-gray-800 hover:text-indigo-500'>Perfil</p>
+            </Popover.Button>
+            <button type='button' onClick={handleCreatePublication}>
+              <p className='px-4 text-gray-800 hover:text-indigo-500'>Crear</p>
+            </button>
+          </div>
 
           <button
             type='button'
@@ -87,7 +76,11 @@ export function Navbar() {
     <>
       <nav className='border-b border-gray-200 py-8'>
         <div className='container grid w-full grid-cols-2 md:grid-cols-3 md:items-center'>
-          <h1 className='mr-6 text-lg font-semibold md:text-2xl'>DTech Inc.</h1>
+          <Link to={FEED_URL} className='flex items-center'>
+            <h1 className='mr-6 text-lg font-semibold md:text-2xl'>
+              DTech Inc.
+            </h1>
+          </Link>
 
           <div className='hidden w-full md:block xl:mx-auto xl:w-[400px]'>
             <SearchBar />
