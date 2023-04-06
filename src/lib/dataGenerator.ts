@@ -19,14 +19,21 @@ export function createRandomPost(
   likes: User[] = [],
   withImage = false
 ): Post {
+  let location = '';
+
+  // Create a location with 4 <= characters <= 30
+  while (location.length > 30 || location.length === 0 || location.length < 4) {
+    location = `${faker.address.cityName()}, ${faker.address.country()}`;
+  }
+
   return {
-    id: faker.datatype.uuid(),
+    id: Math.random().toString().slice(2),
     message: faker.lorem.sentence(),
     create_at: faker.date.between(
       '2023-01-01T00:00:00.000Z',
       '2023-04-07T00:00:00.000Z'
     ),
-    location: `${faker.address.cityName()}, ${faker.address.country()}`,
+    location,
     image: withImage ? faker.image.image(468, 585, true) : '',
     status: 'published',
     author,
