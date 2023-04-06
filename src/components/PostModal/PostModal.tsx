@@ -69,6 +69,7 @@ function PostModalContainer() {
           message: data.message,
           location: data.location,
           image: data.image,
+          status: data.status,
         });
       } else {
         await updatePost(editPost, {
