@@ -13,7 +13,8 @@ interface IPostCardProps {
 
 export function PostCard({ post }: IPostCardProps) {
   const navigate = useNavigate();
-  const { posts, addLike, removeLike } = usePost();
+  const { posts, addLike, removeLike, setIsCreateModalOpen, setEditPost } =
+    usePost();
   const { currentUser } = useAuth();
 
   const haveLike: boolean = useMemo(
@@ -41,13 +42,19 @@ export function PostCard({ post }: IPostCardProps) {
     await removeLike(post);
   };
 
+  const handleEdit = () => {
+    setEditPost(post);
+    setIsCreateModalOpen(true);
+  };
+
   if (post.image) {
     return (
       <div className='pt-4'>
         <PostWithImage
           post={post}
-          handleLike={handleLike}
           haveLike={haveLike}
+          handleLike={handleLike}
+          handleEdit={handleEdit}
         />
       </div>
     );
@@ -57,8 +64,9 @@ export function PostCard({ post }: IPostCardProps) {
     <div className='pb-4'>
       <PostWithMessage
         post={post}
-        handleLike={handleLike}
         haveLike={haveLike}
+        handleLike={handleLike}
+        handleEdit={handleEdit}
       />
     </div>
   );

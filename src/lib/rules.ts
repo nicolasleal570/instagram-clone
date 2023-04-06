@@ -57,6 +57,7 @@ export const createPostSchema = Joi.object()
       'any.required': 'Debes ingresar una ubicación válida',
     }),
     image: Joi.string().allow(''),
+    status: Joi.string().allow(''),
   })
   .messages({
     'object.unknown': 'Este campo no es válido',
