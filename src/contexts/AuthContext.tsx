@@ -21,6 +21,7 @@ export interface AuthContextType {
   login: (username: string) => Promise<User>;
   logout: () => Promise<void>;
   setupCurrentUser: () => Promise<User | undefined>;
+  updateProfile: (data: User) => Promise<void>;
 }
 
 interface AuthContextProviderProps {
@@ -32,7 +33,7 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const [isLoadingUser, setIsLoadingUser] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<User>();
-  const { users } = useUsers();
+  const { users, setUsers } = useUsers();
   const { setData: updateUsers } = useLocalStore<User[]>(USERS_TABLE);
   const { getData: getUserSession, setData: setUserSession } =
     useLocalStore<User>(AUTH_TABLE);
@@ -95,6 +96,31 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     setIsLoadingUser(false);
   };
 
+  const updateProfile = async (data: User) => {
+    const userIndex = users.findIndex(
+      (item) => item.username === currentUser?.username
+    );
+
+    const updatedUser = {
+      ...currentUser,
+      ...data,
+      avatar: !data.avatar?.includes('ui-avatars')
+        ? data.avatar
+        : `https://ui-avatars.com/api/?name=${`${data.name}+${data.surname}`}`,
+    };
+
+    const newUsers: User[] = [
+      ...users.slice(0, userIndex),
+      updatedUser,
+      ...users.slice(userIndex + 1),
+    ];
+
+    await updateUsers(newUsers);
+    await setUserSession(updatedUser);
+    setUsers(newUsers);
+    setCurrentUser(updatedUser);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -105,6 +131,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         login,
         logout,
         setupCurrentUser,
+        updateProfile,
       }}
     >
       {children}
