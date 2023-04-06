@@ -51,8 +51,30 @@ export function UserMenu() {
             <Popover.Button as={Link} to={MY_PROFILE_URL} className='block'>
               <p className='px-4 text-gray-800 hover:text-indigo-500'>Perfil</p>
             </Popover.Button>
-            <button type='button' onClick={handleCreatePublication}>
+            <button
+              type='button'
+              className='block'
+              onClick={handleCreatePublication}
+            >
               <p className='px-4 text-gray-800 hover:text-indigo-500'>Crear</p>
+            </button>
+            <button
+              type='button'
+              className='block'
+              onClick={() => console.log('EXPORT')}
+            >
+              <p className='px-4 text-gray-800 hover:text-indigo-500'>
+                Exportar
+              </p>
+            </button>
+            <button
+              type='button'
+              className='block'
+              onClick={() => console.log('IMPORT')}
+            >
+              <p className='px-4 text-gray-800 hover:text-indigo-500'>
+                Importar
+              </p>
             </button>
           </div>
 
