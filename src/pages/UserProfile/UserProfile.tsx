@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Button } from '../../components/Button/Button';
 import { CardList } from '../../components/CardList/CardList';
 import { Post, User } from '../../types/models';
+import { UserModalForm } from '../../components/UserModalForm/UserModalForm';
 
 interface UserProfileProps {
   user: User;
@@ -23,6 +24,7 @@ export function UserProfile({
 }: UserProfileProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [filter, setFilter] = useState('all');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const likesCount = useMemo(
     () => posts.reduce((acc, curr) => (curr.likes?.length ?? 0) + acc, 0),
@@ -72,12 +74,10 @@ export function UserProfile({
               <h2 className='text-xl'>@{user?.username}</h2>
               {isCurrentUserProfile && (
                 <div className='my-4 w-full md:my-0 lg:w-2/6'>
-                  <Button
-                    type='button'
-                    onClick={() => console.log('UPDATE PROFILE!')}
-                  >
+                  <Button type='button' onClick={() => setIsModalOpen(true)}>
                     Actualizar
                   </Button>
+                  <UserModalForm {...{ user, isModalOpen, setIsModalOpen }} />
                 </div>
               )}
             </div>
