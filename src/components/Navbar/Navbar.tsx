@@ -5,11 +5,13 @@ import { FEED_URL, LOGIN_URL, MY_PROFILE_URL } from '../../lib/routes';
 import { NotificationKind, useNotify } from '../../hooks/useNotify';
 import { SearchBar } from '../SearchBar/SearchBar';
 import { usePost } from '../../hooks/usePost';
+import { exportDataAsJSON } from '../../lib/exportData';
+import { ImportJsonFile } from '../ImportJsonFile/ImportJsonFile';
 
 export function UserMenu() {
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
-  const { setIsCreateModalOpen, getPostsByUser } = usePost();
+  const { setIsCreateModalOpen, currentUserPosts } = usePost();
   const { notify } = useNotify();
 
   const handleCreatePublication = () => {
@@ -29,6 +31,10 @@ export function UserMenu() {
         'Ocurrió un error inesperado. Intenta de nuevo'
       );
     }
+  };
+
+  const handleExportData = () => {
+    exportDataAsJSON(currentUserPosts, 'posts.json');
   };
 
   return (
@@ -58,24 +64,17 @@ export function UserMenu() {
             >
               <p className='px-4 text-gray-800 hover:text-indigo-500'>Crear</p>
             </button>
-            <button
+            <Popover.Button
+              as='button'
               type='button'
               className='block'
-              onClick={() => console.log('EXPORT')}
+              onClick={handleExportData}
             >
               <p className='px-4 text-gray-800 hover:text-indigo-500'>
                 Exportar
               </p>
-            </button>
-            <button
-              type='button'
-              className='block'
-              onClick={() => console.log('IMPORT')}
-            >
-              <p className='px-4 text-gray-800 hover:text-indigo-500'>
-                Importar
-              </p>
-            </button>
+            </Popover.Button>
+            <ImportJsonFile />
           </div>
 
           <button
