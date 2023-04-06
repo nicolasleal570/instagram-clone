@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from 'react';
+import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { usePost } from '../../hooks/usePost';
 import { Button } from '../Button/Button';
@@ -34,7 +34,7 @@ const contentAnimations = {
   leaveTo: 'opacity-0 scale-95',
 };
 
-function PostModalContainer() {
+function PostModalFormContainer() {
   const { notify } = useNotify();
   const {
     isCreateModalOpen,
@@ -287,10 +287,10 @@ function PostModalContainer() {
   );
 }
 
-export function PostModal() {
+export function PostModalForm() {
   const { isCreateModalOpen } = usePost();
 
   if (!isCreateModalOpen) return <></>;
 
-  return <PostModalContainer />;
+  return <PostModalFormContainer />;
 }
