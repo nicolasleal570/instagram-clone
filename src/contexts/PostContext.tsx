@@ -1,9 +1,11 @@
 import {
-  useEffect,
   useState,
   createContext,
   ReactNode,
   useCallback,
+  useEffect,
+  useContext,
+  memo,
 } from 'react';
 import { useLocalStore } from '../hooks/useLocalStorage';
 import { Post } from '../types/models';
@@ -12,12 +14,16 @@ import { useAuth } from '../hooks/useAuth';
 
 export interface PostContextType {
   posts: Post[];
+  currentUserPosts: Post[];
   isCreateModalOpen: boolean;
   setIsCreateModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   createPost: (
     post: Pick<Post, 'image' | 'message' | 'location'>
   ) => Promise<Post | undefined>;
+  getAllPosts: () => Promise<Post[]>;
   getPostsByUser: (username?: string, includeAll?: boolean) => Promise<Post[]>;
+  addLike: (postId: Post) => Promise<void>;
+  removeLike: (postId: Post) => Promise<void>;
 }
 
 interface PostContextProviderProps {
@@ -29,6 +35,7 @@ export const PostContext = createContext<PostContextType | null>(null);
 export function PostContextProvider({ children }: PostContextProviderProps) {
   const { currentUser } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
+  const [currentUserPosts, setCurrentUserPosts] = useState<Post[]>([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
   const { getData, setData } = useLocalStore<Post[]>(POSTS_TABLE);
 
@@ -80,6 +87,47 @@ export function PostContextProvider({ children }: PostContextProviderProps) {
     }
   };
 
+  const addLike = async (post: Post) => {
+    if (currentUser) {
+      const postIndex = posts.findIndex((item) => item.id === post.id);
+
+      const newPost = { ...post, likes: [...(post.likes ?? []), currentUser] };
+
+      const newPosts: Post[] = [
+        ...posts.slice(0, postIndex),
+        newPost,
+        ...posts.slice(postIndex + 1),
+      ];
+
+      await setData(newPosts);
+      setPosts(newPosts);
+    }
+  };
+
+  const removeLike = async (post: Post) => {
+    if (currentUser) {
+      const postIndex = posts.findIndex((item) => item.id === post.id);
+
+      const newPost = {
+        ...post,
+        likes: [
+          ...(post.likes ?? []).filter(
+            (like) => like.username !== currentUser.username
+          ),
+        ],
+      };
+
+      const newPosts: Post[] = [
+        ...posts.slice(0, postIndex),
+        newPost,
+        ...posts.slice(postIndex + 1),
+      ];
+
+      await setData(newPosts);
+      setPosts(newPosts);
+    }
+  };
+
   const getAllPosts = async () => {
     const data = (await getData()) ?? [];
     setPosts(
@@ -93,22 +141,40 @@ export function PostContextProvider({ children }: PostContextProviderProps) {
   };
 
   useEffect(() => {
-    if (posts.length === 0) {
-      void getAllPosts();
+    if (currentUser) {
+      setCurrentUserPosts(
+        posts.filter((item) => item.author.username === currentUser.username)
+      );
     }
-  }, []);
+  }, [posts]);
 
   return (
     <PostContext.Provider
       value={{
         posts,
-        getPostsByUser,
+        currentUserPosts,
         isCreateModalOpen,
+        getPostsByUser,
+        getAllPosts,
         setIsCreateModalOpen,
         createPost,
+        addLike,
+        removeLike,
       }}
     >
       {children}
     </PostContext.Provider>
   );
 }
+
+export const SetupPosts = memo(function () {
+  const { getAllPosts } = useContext(PostContext) as PostContextType;
+
+  useEffect(() => {
+    void getAllPosts();
+  }, []);
+
+  return <></>;
+});
+
+SetupPosts.displayName = 'SetupPosts';

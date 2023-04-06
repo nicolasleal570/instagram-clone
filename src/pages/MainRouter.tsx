@@ -14,6 +14,7 @@ import { FeedPage } from './FeedPage/FeedPage';
 import { RegisterPage } from './RegisterPage/RegisterPage';
 import { LoginPage } from './LoginPage/LoginPage';
 import { ProfilePage } from './ProfilePage/ProfilePage';
+import { PrivateRoute } from '../components/PrivateRoute/PrivateRoute';
 
 export function MainRouter() {
   return (
@@ -22,7 +23,14 @@ export function MainRouter() {
         <Route element={<CommonLayout />}>
           <Route element={<FeedLayout />}>
             <Route path={FEED_URL} element={<FeedPage />} />
-            <Route path={MY_PROFILE_URL} element={<ProfilePage />} />
+            <Route
+              path={MY_PROFILE_URL}
+              element={
+                <PrivateRoute>
+                  <ProfilePage />
+                </PrivateRoute>
+              }
+            />
             <Route path={PROFILE_URL()} element={<ProfilePage />} />
           </Route>
 

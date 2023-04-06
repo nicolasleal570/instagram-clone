@@ -52,14 +52,13 @@ function CreatePostModalContainer() {
 
   const onSubmit: SubmitHandler<CreatePostFormValues> = async (data) => {
     try {
-      console.log({ data });
-      const res = await createPost({
+      await createPost({
         message: data.message,
         location: data.location,
         image: data.image,
       });
-      console.log('RESPONSE!', res);
       notify(NotificationKind.Success, 'Publicación creada con éxito!');
+      setIsCreateModalOpen(false);
     } catch (error) {
       notify(
         NotificationKind.Error,

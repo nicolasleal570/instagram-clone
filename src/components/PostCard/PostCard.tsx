@@ -1,8 +1,12 @@
-import { HeartIcon } from '@heroicons/react/24/outline';
+import { HeartIcon as HeartIconOutline } from '@heroicons/react/24/outline';
+import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 import dayjs from 'dayjs';
 import { Post } from '../../types/models';
-import { Link } from 'react-router-dom';
-import { PROFILE_URL } from '../../lib/routes';
+import { Link, useNavigate } from 'react-router-dom';
+import { LOGIN_URL, PROFILE_URL } from '../../lib/routes';
+import { usePost } from '../../hooks/usePost';
+import { useAuth } from '../../hooks/useAuth';
+import { useMemo } from 'react';
 
 interface IPostCardProps {
   post: Post;
@@ -10,6 +14,7 @@ interface IPostCardProps {
 
 interface IPostWithImageProps extends IPostCardProps {
   handleLike: () => void;
+  haveLike: boolean;
 }
 
 const getClassByPostStatus = (
@@ -33,8 +38,10 @@ const getClassByPostStatus = (
   return statusToText[status];
 };
 
-function PostWithImage({ post, handleLike }: IPostWithImageProps) {
+function PostWithImage({ post, handleLike, haveLike }: IPostWithImageProps) {
   const status = getClassByPostStatus(post.status);
+
+  const HeartIcon = haveLike ? HeartIconSolid : HeartIconOutline;
 
   return (
     <div className=''>
@@ -79,7 +86,7 @@ function PostWithImage({ post, handleLike }: IPostWithImageProps) {
           className='flex items-center'
           onClick={handleLike}
         >
-          <HeartIcon className='h-6 w-6 text-gray-800' />
+          <HeartIcon className='h-6 w-6 text-red-400' />
         </button>
         <p className='block py-2 text-sm font-semibold'>
           {post.likes?.length} Likes
@@ -93,8 +100,10 @@ function PostWithImage({ post, handleLike }: IPostWithImageProps) {
   );
 }
 
-function PostWithMessage({ post, handleLike }: IPostWithImageProps) {
+function PostWithMessage({ post, handleLike, haveLike }: IPostWithImageProps) {
   const status = getClassByPostStatus(post.status);
+
+  const HeartIcon = haveLike ? HeartIconSolid : HeartIconOutline;
 
   return (
     <div className='grid grid-cols-9 px-2 pt-4'>
@@ -134,8 +143,8 @@ function PostWithMessage({ post, handleLike }: IPostWithImageProps) {
             className='flex items-center'
             onClick={handleLike}
           >
-            <HeartIcon className='h-6 w-6 text-gray-800' />
-            <p className='ml-2.5 text-gray-800'>{post.likes?.length}</p>
+            <HeartIcon className='h-6 w-6 text-red-400' />
+            <p className='ml-2 text-gray-800'>{post.likes?.length}</p>
           </button>
         </div>
       </div>
@@ -144,13 +153,40 @@ function PostWithMessage({ post, handleLike }: IPostWithImageProps) {
 }
 
 export function PostCard({ post }: IPostCardProps) {
-  const handleLike = () => {
-    console.log('LIKE LIKE LIKE');
+  const navigate = useNavigate();
+  const { posts, addLike, removeLike } = usePost();
+  const { currentUser } = useAuth();
+
+  const haveLike: boolean = useMemo(
+    () =>
+      !!posts
+        .find((data) => data.id === post.id)
+        ?.likes?.map((item) => item.username)
+        .includes(currentUser?.username ?? ''),
+    [posts, currentUser]
+  );
+
+  const handleLike = async () => {
+    if (!currentUser) {
+      navigate(LOGIN_URL);
+      return;
+    }
+
+    if (!haveLike) {
+      await addLike(post);
+      return;
+    }
+
+    await removeLike(post);
   };
 
   if (post.image) {
-    return <PostWithImage post={post} handleLike={handleLike} />;
+    return (
+      <PostWithImage post={post} handleLike={handleLike} haveLike={haveLike} />
+    );
   }
 
-  return <PostWithMessage post={post} handleLike={handleLike} />;
+  return (
+    <PostWithMessage post={post} handleLike={handleLike} haveLike={haveLike} />
+  );
 }

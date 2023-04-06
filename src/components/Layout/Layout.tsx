@@ -1,13 +1,12 @@
 import { Outlet } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { UserContextProvider } from '../../contexts/UserContext';
-import { PostContextProvider } from '../../contexts/PostContext';
+import { PostContextProvider, SetupPosts } from '../../contexts/PostContext';
 import { AuthContextProvider, SetupUser } from '../../contexts/AuthContext';
+import { CreatePostModal } from '../CreatePostModal/CreatePostModal';
 import { Navbar } from '../Navbar/Navbar';
 
 import 'react-toastify/dist/ReactToastify.css';
-import { CreatePostModal } from '../CreatePostModal/CreatePostModal';
-import { usePost } from '../../hooks/usePost';
 
 export function CommonLayout() {
   return (
@@ -17,6 +16,7 @@ export function CommonLayout() {
           <main className='body'>
             <Outlet />
             <SetupUser />
+            <SetupPosts />
             <ToastContainer />
           </main>
         </PostContextProvider>
