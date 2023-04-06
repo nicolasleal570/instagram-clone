@@ -19,7 +19,11 @@ import {
   userErrors,
 } from '../../lib/errors';
 
-export function LoginPage() {
+interface LoginPageProps {
+  mockOnSubmit?: SubmitHandler<LoginFormValues>; // For tests purpose
+}
+
+export function LoginPage({ mockOnSubmit }: LoginPageProps) {
   const navigate = useNavigate();
   const {
     handleSubmit,
@@ -65,7 +69,7 @@ export function LoginPage() {
   return (
     <>
       <div className='container grid h-screen w-full grid-cols-1 place-content-center md:mx-auto md:max-w-[400px]'>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(mockOnSubmit ?? onSubmit)}>
           <h1 className='mb-2 block w-full text-center text-4xl font-semibold text-slate-900'>
             Digital Tech Inc.
           </h1>
