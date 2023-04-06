@@ -16,10 +16,13 @@ export interface PostContextType {
   posts: Post[];
   currentUserPosts: Post[];
   isCreateModalOpen: boolean;
+  editPost: Post | undefined;
   setIsCreateModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setEditPost: React.Dispatch<React.SetStateAction<Post | undefined>>;
   createPost: (
     post: Pick<Post, 'image' | 'message' | 'location'>
   ) => Promise<Post | undefined>;
+  updatePost: (oldPost: Post, newData: Post) => Promise<Post | undefined>;
   getAllPosts: () => Promise<Post[]>;
   getPostsByUser: (username?: string, includeAll?: boolean) => Promise<Post[]>;
   addLike: (postId: Post) => Promise<void>;
@@ -36,6 +39,7 @@ export function PostContextProvider({ children }: PostContextProviderProps) {
   const { currentUser } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [currentUserPosts, setCurrentUserPosts] = useState<Post[]>([]);
+  const [editPost, setEditPost] = useState<Post>();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
   const { getData, setData } = useLocalStore<Post[]>(POSTS_TABLE);
 
@@ -64,27 +68,55 @@ export function PostContextProvider({ children }: PostContextProviderProps) {
   const createPost = async (
     post: Pick<Post, 'image' | 'message' | 'location'>
   ) => {
-    if (currentUser) {
-      const postData: Post = {
-        ...post,
-        id: Math.random().toString().slice(2),
-        create_at: new Date().toISOString(),
-        author: currentUser,
-        likes: [],
-        status: 'drafted',
-      };
+    if (!currentUser) return;
 
-      const newPosts = [postData, ...posts].sort(
-        (a, b) =>
-          Date.parse(b.create_at as string) - Date.parse(a.create_at as string)
-      );
+    const postData: Post = {
+      ...post,
+      id: Math.random().toString().slice(2),
+      create_at: new Date().toISOString(),
+      author: currentUser,
+      likes: [],
+      status: 'drafted',
+    };
 
-      await setData(newPosts);
+    const newPosts = [postData, ...posts].sort(
+      (a, b) =>
+        Date.parse(b.create_at as string) - Date.parse(a.create_at as string)
+    );
 
-      setPosts(newPosts);
+    await setData(newPosts);
 
-      return postData;
-    }
+    setPosts(newPosts);
+
+    return postData;
+  };
+
+  const updatePost = async (oldPost: Post, newData: Post) => {
+    if (!currentUser || currentUser.username !== oldPost.author.username)
+      return;
+
+    const postIndex = posts.findIndex((item) => item.id === oldPost.id);
+
+    const updatedPost = {
+      ...oldPost,
+      ...newData,
+    };
+
+    const newPosts: Post[] = [
+      ...posts.slice(0, postIndex),
+      updatedPost,
+      ...posts.slice(postIndex + 1),
+    ].sort(
+      (a, b) =>
+        Date.parse(b.create_at as string) - Date.parse(a.create_at as string)
+    );
+
+    await setData(newPosts);
+
+    setPosts(newPosts);
+    setEditPost(undefined);
+
+    return updatedPost;
   };
 
   const addLike = async (post: Post) => {
@@ -157,10 +189,13 @@ export function PostContextProvider({ children }: PostContextProviderProps) {
         posts,
         currentUserPosts,
         isCreateModalOpen,
+        editPost,
         getPostsByUser,
         getAllPosts,
         setIsCreateModalOpen,
+        setEditPost,
         createPost,
+        updatePost,
         addLike,
         removeLike,
       }}

@@ -1,16 +1,17 @@
 import { useWatch, type Control, Controller } from 'react-hook-form';
 import { CreatePostFormValues } from '../../types/CreatePostFormValues';
 import { getBase64 } from '../../lib/utils';
+import { NotificationKind, useNotify } from '../../hooks/useNotify';
 
 interface CustomFileInputProps {
   control: Control<CreatePostFormValues>;
 }
 
 export function CustomFileInput({ control }: CustomFileInputProps) {
+  const { notify } = useNotify();
   const imageCurrentValue = useWatch({
     control,
     name: 'image',
-    defaultValue: '',
   });
 
   return (
@@ -50,6 +51,11 @@ export function CustomFileInput({ control }: CustomFileInputProps) {
                 if (event.target.files?.[0]) {
                   const file = event.target.files[0];
 
+                  if (!file.type.includes('image')) {
+                    notify(NotificationKind.Error, 'Tipo de archivo inválido');
+                    return;
+                  }
+
                   const base64 = (await getBase64(file)) as string;
 
                   onChange(base64);
@@ -62,7 +68,7 @@ export function CustomFileInput({ control }: CustomFileInputProps) {
                 className='mt-2 text-xs font-semibold text-red-400'
                 onClick={() => onChange('')}
               >
-                Eliminar
+                Eliminar foto
               </button>
             )}
           </>

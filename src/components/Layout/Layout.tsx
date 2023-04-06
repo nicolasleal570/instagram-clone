@@ -3,7 +3,7 @@ import { ToastContainer } from 'react-toastify';
 import { UserContextProvider } from '../../contexts/UserContext';
 import { PostContextProvider, SetupPosts } from '../../contexts/PostContext';
 import { AuthContextProvider, SetupUser } from '../../contexts/AuthContext';
-import { CreatePostModal } from '../CreatePostModal/CreatePostModal';
+import { PostModal } from '../PostModal/PostModal';
 import { Navbar } from '../Navbar/Navbar';
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -31,7 +31,7 @@ export function FeedLayout() {
       <Navbar />
       <main className='body'>
         <Outlet />
-        <CreatePostModal />
+        <PostModal />
         <ToastContainer />
       </main>
     </>
