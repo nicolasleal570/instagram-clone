@@ -13,9 +13,11 @@ describe('Test Login page component', () => {
 
   test('Should display error if username is empty', async () => {
     const mockOnSubmit = jest.fn();
-    const { getByText } = render(<LoginPage mockOnSubmit={mockOnSubmit} />);
+    const { getByText, getByRole } = render(
+      <LoginPage mockOnSubmit={mockOnSubmit} />
+    );
 
-    fireEvent.click(getByText(/Entrar/i));
+    fireEvent.click(getByRole('button', { name: /Entrar/i }));
 
     await waitFor(() => {
       getByText(/Debes ingresar un nombre de usuario válido/i);
@@ -24,13 +26,15 @@ describe('Test Login page component', () => {
   });
 
   test('Should display error if username is not valid', async () => {
-    const { getByText, getByPlaceholderText } = render(<LoginPage />);
+    const { getByText, getByPlaceholderText, getByRole } = render(
+      <LoginPage />
+    );
 
     fireEvent.change(getByPlaceholderText(/john_doe23/i), {
       target: { value: 'Hello world' },
     });
 
-    fireEvent.click(getByText(/Entrar/i));
+    fireEvent.click(getByRole('button', { name: /Entrar/i }));
 
     await waitFor(() => {
       getByText(/Debes ingresar un nombre de usuario válido/i);
@@ -38,13 +42,15 @@ describe('Test Login page component', () => {
   });
 
   test('Should display error if username is less than 3 characters long', async () => {
-    const { getByText, getByPlaceholderText } = render(<LoginPage />);
+    const { getByText, getByPlaceholderText, getByRole } = render(
+      <LoginPage />
+    );
 
     fireEvent.change(getByPlaceholderText(/john_doe23/i), {
       target: { value: 'ab' },
     });
 
-    fireEvent.click(getByText(/Entrar/i));
+    fireEvent.click(getByRole('button', { name: /Entrar/i }));
 
     await waitFor(() => {
       getByText(/Debes ingresar un usuario de mínimo 3 caracteres/i);
@@ -52,13 +58,15 @@ describe('Test Login page component', () => {
   });
 
   test('Should display error if username is longer than 20 characters long', async () => {
-    const { getByText, getByPlaceholderText } = render(<LoginPage />);
+    const { getByText, getByPlaceholderText, getByRole } = render(
+      <LoginPage />
+    );
 
     fireEvent.change(getByPlaceholderText(/john_doe23/i), {
       target: { value: 'foo'.repeat(20) },
     });
 
-    fireEvent.click(getByText(/Entrar/i));
+    fireEvent.click(getByRole('button', { name: /Entrar/i }));
 
     await waitFor(() => {
       getByText(/Debes ingresar un usuario de máximo 20 caracteres/i);
@@ -67,7 +75,7 @@ describe('Test Login page component', () => {
 
   test('Should send the form', async () => {
     const mockOnSubmit = jest.fn();
-    const { getByText, getByPlaceholderText } = render(
+    const { getByPlaceholderText, getByRole } = render(
       <LoginPage mockOnSubmit={mockOnSubmit} />
     );
 
@@ -75,7 +83,7 @@ describe('Test Login page component', () => {
       target: { value: 'john_doe23' },
     });
 
-    fireEvent.click(getByText(/Entrar/i));
+    fireEvent.click(getByRole('button', { name: /Entrar/i }));
 
     await waitFor(() => {
       expect(mockOnSubmit).toHaveBeenCalledTimes(1);
