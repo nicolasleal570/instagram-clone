@@ -59,6 +59,7 @@ export function FileField({
           className='sr-only'
           id={fieldId}
           onChange={onAvatarChange}
+          aria-label={inputProps.name}
           {...inputProps}
         />
         <label

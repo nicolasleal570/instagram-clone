@@ -33,6 +33,7 @@ export function InputField({
             'rounded rounded-l-md py-3 pl-[55px] pr-2.5': !!leadIcon,
           }
         )}
+        aria-label={inputProps.name}
         {...inputProps}
       />
     </div>

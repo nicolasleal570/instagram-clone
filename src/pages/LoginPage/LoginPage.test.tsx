@@ -3,9 +3,9 @@ import { LoginPage } from './LoginPage';
 
 describe('Test Login page component', () => {
   test('Should render correctly', async () => {
-    const { getByText, getByPlaceholderText } = render(<LoginPage />);
+    const { getByText, getByRole } = render(<LoginPage />);
 
-    const usernameInput = getByPlaceholderText(/john_doe23/i);
+    const usernameInput = getByRole('textbox', { name: 'username' });
     const loginButton = getByText(/Entrar/i);
     const backButton = getByText(/Volver al feed/i);
     const signUpLink = getByText(/Regístarte aquí/i);
@@ -19,7 +19,8 @@ describe('Test Login page component', () => {
   });
 
   test('Should display error if username is empty', async () => {
-    const { getByText } = render(<LoginPage />);
+    const mockOnSubmit = jest.fn();
+    const { getByText } = render(<LoginPage mockOnSubmit={mockOnSubmit} />);
 
     fireEvent.click(getByText(/Entrar/i));
 
@@ -27,6 +28,8 @@ describe('Test Login page component', () => {
       expect(
         getByText(/Debes ingresar un nombre de usuario válido/i)
       ).toBeInTheDocument();
+
+      expect(mockOnSubmit).not.toHaveBeenCalled();
     });
   });
 

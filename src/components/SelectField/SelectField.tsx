@@ -31,6 +31,7 @@ export function SelectField({
               inputProps.disabled,
           }
         )}
+        aria-label={inputProps.name}
         {...inputProps}
       >
         {options.map((option) => (
