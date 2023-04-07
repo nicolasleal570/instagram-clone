@@ -2,20 +2,13 @@ import { fireEvent, render, waitFor } from '../../tests/setup';
 import { LoginPage } from './LoginPage';
 
 describe('Test Login page component', () => {
-  test('Should render correctly', async () => {
+  test('Should render correctly', () => {
     const { getByText, getByRole } = render(<LoginPage />);
 
-    const usernameInput = getByRole('textbox', { name: 'username' });
-    const loginButton = getByText(/Entrar/i);
-    const backButton = getByText(/Volver al feed/i);
-    const signUpLink = getByText(/Regístarte aquí/i);
-
-    await waitFor(() => {
-      expect(usernameInput).toBeInTheDocument();
-      expect(loginButton).toBeInTheDocument();
-      expect(backButton).toBeInTheDocument();
-      expect(signUpLink).toBeInTheDocument();
-    });
+    getByRole('textbox', { name: 'username' });
+    getByText(/Entrar/i);
+    getByText(/Volver al feed/i);
+    getByText(/Regístarte aquí/i);
   });
 
   test('Should display error if username is empty', async () => {
@@ -25,10 +18,7 @@ describe('Test Login page component', () => {
     fireEvent.click(getByText(/Entrar/i));
 
     await waitFor(() => {
-      expect(
-        getByText(/Debes ingresar un nombre de usuario válido/i)
-      ).toBeInTheDocument();
-
+      getByText(/Debes ingresar un nombre de usuario válido/i);
       expect(mockOnSubmit).not.toHaveBeenCalled();
     });
   });
@@ -43,9 +33,7 @@ describe('Test Login page component', () => {
     fireEvent.click(getByText(/Entrar/i));
 
     await waitFor(() => {
-      expect(
-        getByText(/Debes ingresar un nombre de usuario válido/i)
-      ).toBeInTheDocument();
+      getByText(/Debes ingresar un nombre de usuario válido/i);
     });
   });
 
@@ -59,9 +47,7 @@ describe('Test Login page component', () => {
     fireEvent.click(getByText(/Entrar/i));
 
     await waitFor(() => {
-      expect(
-        getByText(/Debes ingresar un usuario de mínimo 3 caracteres/i)
-      ).toBeInTheDocument();
+      getByText(/Debes ingresar un usuario de mínimo 3 caracteres/i);
     });
   });
 
@@ -75,9 +61,7 @@ describe('Test Login page component', () => {
     fireEvent.click(getByText(/Entrar/i));
 
     await waitFor(() => {
-      expect(
-        getByText(/Debes ingresar un usuario de máximo 20 caracteres/i)
-      ).toBeInTheDocument();
+      getByText(/Debes ingresar un usuario de máximo 20 caracteres/i);
     });
   });
 

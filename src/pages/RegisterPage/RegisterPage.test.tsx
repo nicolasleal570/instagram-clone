@@ -16,7 +16,8 @@ describe('Test Register page component', () => {
   });
 
   test('Should display errors if form is empty', async () => {
-    const { getByText } = render(<RegisterPage />);
+    const mockOnSubmit = jest.fn();
+    const { getByText } = render(<RegisterPage mockOnSubmit={mockOnSubmit} />);
 
     fireEvent.click(getByText(/Entrar/i));
 
@@ -24,6 +25,7 @@ describe('Test Register page component', () => {
       getByText(/Debes ingresar un nombre válido/i);
       getByText(/Debes ingresar un apellido válido/i);
       getByText(/Debes ingresar un nombre de usuario válido/i);
+      expect(mockOnSubmit).not.toHaveBeenCalled();
     });
   });
 
