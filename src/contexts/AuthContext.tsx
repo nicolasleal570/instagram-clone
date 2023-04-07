@@ -24,13 +24,21 @@ export interface AuthContextType {
   updateProfile: (data: User) => Promise<void>;
 }
 
+export type AuthContextValueType = Partial<AuthContextType>;
+
 interface AuthContextProviderProps {
   children: ReactNode;
+  value?: AuthContextValueType;
 }
 
-export const AuthContext = createContext<AuthContextType | null>(null);
+export const AuthContext = createContext<
+  AuthContextType | Partial<AuthContextType> | null
+>(null);
 
-export function AuthContextProvider({ children }: AuthContextProviderProps) {
+export function AuthContextProvider({
+  children,
+  value,
+}: AuthContextProviderProps) {
   const [isLoadingUser, setIsLoadingUser] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<User>();
   const { users, setUsers } = useUsers();
@@ -123,16 +131,18 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
   return (
     <AuthContext.Provider
-      value={{
-        currentUser,
-        isLoggedIn: !!currentUser?.username,
-        isLoadingUser,
-        register,
-        login,
-        logout,
-        setupCurrentUser,
-        updateProfile,
-      }}
+      value={
+        value ?? {
+          currentUser,
+          isLoggedIn: !!currentUser?.username,
+          isLoadingUser,
+          register,
+          login,
+          logout,
+          setupCurrentUser,
+          updateProfile,
+        }
+      }
     >
       {children}
     </AuthContext.Provider>

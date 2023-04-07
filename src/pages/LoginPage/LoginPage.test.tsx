@@ -2,85 +2,80 @@ import { fireEvent, render, waitFor } from '../../tests/setup';
 import { LoginPage } from './LoginPage';
 
 describe('Test Login page component', () => {
-  test('Should render correctly', async () => {
-    const { getByText, getByPlaceholderText } = render(<LoginPage />);
+  test('Should render correctly', () => {
+    const { getByText, getByRole } = render(<LoginPage />);
 
-    const usernameInput = getByPlaceholderText(/john_doe23/i);
-    const loginButton = getByText(/Entrar/i);
-    const backButton = getByText(/Volver al feed/i);
-    const signUpLink = getByText(/Regístarte aquí/i);
-
-    await waitFor(() => {
-      expect(usernameInput).toBeInTheDocument();
-      expect(loginButton).toBeInTheDocument();
-      expect(backButton).toBeInTheDocument();
-      expect(signUpLink).toBeInTheDocument();
-    });
+    getByRole('textbox', { name: 'username' });
+    getByText(/Entrar/i);
+    getByText(/Volver al feed/i);
+    getByText(/Regístarte aquí/i);
   });
 
   test('Should display error if username is empty', async () => {
-    const { getByText } = render(<LoginPage />);
+    const mockOnSubmit = jest.fn();
+    const { getByText, getByRole } = render(
+      <LoginPage mockOnSubmit={mockOnSubmit} />
+    );
 
-    fireEvent.click(getByText(/Entrar/i));
+    fireEvent.click(getByRole('button', { name: /Entrar/i }));
 
     await waitFor(() => {
-      expect(
-        getByText(/Debes ingresar un nombre de usuario válido/i)
-      ).toBeInTheDocument();
+      getByText(/Debes ingresar un nombre de usuario válido/i);
+      expect(mockOnSubmit).not.toHaveBeenCalled();
     });
   });
 
   test('Should display error if username is not valid', async () => {
-    const { getByText, getByPlaceholderText } = render(<LoginPage />);
+    const { getByText, getByPlaceholderText, getByRole } = render(
+      <LoginPage />
+    );
 
     fireEvent.change(getByPlaceholderText(/john_doe23/i), {
       target: { value: 'Hello world' },
     });
 
-    fireEvent.click(getByText(/Entrar/i));
+    fireEvent.click(getByRole('button', { name: /Entrar/i }));
 
     await waitFor(() => {
-      expect(
-        getByText(/Debes ingresar un nombre de usuario válido/i)
-      ).toBeInTheDocument();
+      getByText(/Debes ingresar un nombre de usuario válido/i);
     });
   });
 
   test('Should display error if username is less than 3 characters long', async () => {
-    const { getByText, getByPlaceholderText } = render(<LoginPage />);
+    const { getByText, getByPlaceholderText, getByRole } = render(
+      <LoginPage />
+    );
 
     fireEvent.change(getByPlaceholderText(/john_doe23/i), {
       target: { value: 'ab' },
     });
 
-    fireEvent.click(getByText(/Entrar/i));
+    fireEvent.click(getByRole('button', { name: /Entrar/i }));
 
     await waitFor(() => {
-      expect(
-        getByText(/Debes ingresar un usuario de mínimo 3 caracteres/i)
-      ).toBeInTheDocument();
+      getByText(/Debes ingresar un usuario de mínimo 3 caracteres/i);
     });
   });
 
   test('Should display error if username is longer than 20 characters long', async () => {
-    const { getByText, getByPlaceholderText } = render(<LoginPage />);
+    const { getByText, getByPlaceholderText, getByRole } = render(
+      <LoginPage />
+    );
 
     fireEvent.change(getByPlaceholderText(/john_doe23/i), {
       target: { value: 'foo'.repeat(20) },
     });
 
-    fireEvent.click(getByText(/Entrar/i));
+    fireEvent.click(getByRole('button', { name: /Entrar/i }));
 
     await waitFor(() => {
-      expect(
-        getByText(/Debes ingresar un usuario de máximo 20 caracteres/i)
-      ).toBeInTheDocument();
+      getByText(/Debes ingresar un usuario de máximo 20 caracteres/i);
     });
   });
 
   test('Should send the form', async () => {
     const mockOnSubmit = jest.fn();
-    const { getByText, getByPlaceholderText } = render(
+    const { getByPlaceholderText, getByRole } = render(
       <LoginPage mockOnSubmit={mockOnSubmit} />
     );
 
@@ -88,7 +83,7 @@ describe('Test Login page component', () => {
       target: { value: 'john_doe23' },
     });
 
-    fireEvent.click(getByText(/Entrar/i));
+    fireEvent.click(getByRole('button', { name: /Entrar/i }));
 
     await waitFor(() => {
       expect(mockOnSubmit).toHaveBeenCalledTimes(1);

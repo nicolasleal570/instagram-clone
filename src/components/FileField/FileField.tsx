@@ -59,6 +59,7 @@ export function FileField({
           className='sr-only'
           id={fieldId}
           onChange={onAvatarChange}
+          aria-label={inputProps.name}
           {...inputProps}
         />
         <label
@@ -83,6 +84,7 @@ export function FileField({
             <img
               className='h-full w-full object-contain object-center'
               src={image}
+              alt='User avatar'
             />
           </div>
           <button

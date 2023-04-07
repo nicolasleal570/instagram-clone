@@ -18,7 +18,11 @@ import {
 import { RegisterForm } from '../../components/RegisterForm/RegisterForm';
 import { uploadCloudinaryFile } from '../../services/cloudinary';
 
-export function RegisterPage() {
+interface RegisterPageProps {
+  mockOnSubmit?: SubmitHandler<RegisterFormValues>; // For tests purpose
+}
+
+export function RegisterPage({ mockOnSubmit }: RegisterPageProps) {
   const navigate = useNavigate();
   const methods = useForm<RegisterFormValues>({
     resolver: joiResolver(registerSchema),
@@ -81,7 +85,7 @@ export function RegisterPage() {
   return (
     <FormProvider {...methods}>
       <div className='container grid h-screen w-full grid-cols-1 place-content-center md:mx-auto md:max-w-[400px]'>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(mockOnSubmit ?? onSubmit)}>
           <h1 className='mb-2 block w-full text-center text-4xl font-semibold text-slate-900'>
             Digital Tech Inc.
           </h1>

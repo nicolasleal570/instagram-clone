@@ -8,13 +8,21 @@ export interface UserContextType {
   setUsers: React.Dispatch<React.SetStateAction<User[]>>;
 }
 
+export type UserContextValueType = Partial<UserContextType>;
+
 interface UserContextProviderProps {
   children: ReactNode;
+  value?: UserContextValueType; // For tests purpose
 }
 
-export const UserContext = createContext<UserContextType | null>(null);
+export const UserContext = createContext<
+  UserContextType | Partial<UserContextType> | null
+>(null);
 
-export function UserContextProvider({ children }: UserContextProviderProps) {
+export function UserContextProvider({
+  children,
+  value,
+}: UserContextProviderProps) {
   const [users, setUsers] = useState<User[]>([]);
   const { getData } = useLocalStore<User[]>(USERS_TABLE);
 
@@ -29,10 +37,12 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
 
   return (
     <UserContext.Provider
-      value={{
-        users,
-        setUsers,
-      }}
+      value={
+        value ?? {
+          users,
+          setUsers,
+        }
+      }
     >
       {children}
     </UserContext.Provider>

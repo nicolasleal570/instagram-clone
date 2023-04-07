@@ -24,6 +24,7 @@ export function CustomFileInput({ control }: CustomFileInputProps) {
           <img
             src={imageCurrentValue}
             className='h-full w-full object-contain object-center'
+            alt='Post cover'
           />
         ) : (
           <>
@@ -47,6 +48,7 @@ export function CustomFileInput({ control }: CustomFileInputProps) {
               className='hidden'
               id='image'
               name={name}
+              aria-label={name}
               onChange={async (event) => {
                 if (event.target.files?.[0]) {
                   const file = event.target.files[0];

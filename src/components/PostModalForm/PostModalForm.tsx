@@ -34,7 +34,11 @@ const contentAnimations = {
   leaveTo: 'opacity-0 scale-95',
 };
 
-function PostModalFormContainer() {
+interface PostModalFormProps {
+  mockOnSubmit?: SubmitHandler<CreatePostFormValues>; // For tests purpose
+}
+
+function PostModalFormContainer({ mockOnSubmit }: PostModalFormProps) {
   const { notify } = useNotify();
   const {
     isCreateModalOpen,
@@ -122,7 +126,7 @@ function PostModalFormContainer() {
         <div className='fixed inset-0 overflow-y-auto'>
           <div className='my-4 flex justify-center text-center'>
             <Transition.Child as={Fragment} {...contentAnimations}>
-              <form onSubmit={handleSubmit(onSubmit)}>
+              <form onSubmit={handleSubmit(mockOnSubmit ?? onSubmit)}>
                 <Dialog.Panel className='w-full transform overflow-hidden rounded bg-white p-6 text-left align-middle shadow-xl transition-all'>
                   <Dialog.Title
                     as='h3'
@@ -287,10 +291,10 @@ function PostModalFormContainer() {
   );
 }
 
-export function PostModalForm() {
+export function PostModalForm(props: PostModalFormProps) {
   const { isCreateModalOpen } = usePost();
 
   if (!isCreateModalOpen) return <></>;
 
-  return <PostModalFormContainer />;
+  return <PostModalFormContainer {...props} />;
 }
