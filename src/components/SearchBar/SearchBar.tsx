@@ -1,40 +1,45 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { InputField } from '../InputField/InputField';
 import { usePost } from '../../hooks/usePost';
-import { ChangeEventHandler, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Post } from '../../types/models';
+import { useDebounce } from '../../hooks/useDebounce';
 
 export function SearchBar() {
   const { posts, setPosts } = usePost();
-  const [allPosts, setAllPosts] = useState<Post[]>([]);
-
+  const [search, setSearch] = useState('');
   const mounted = useRef<boolean>(false);
+  const allPosts = useRef<Post[]>([]);
 
-  const handleFilter: ChangeEventHandler<HTMLInputElement> = (event) => {
-    const inputValue = event.target.value.toLowerCase();
+  const debouncedSearch = useDebounce<string>(search);
 
-    if (!inputValue) {
-      setPosts(allPosts);
+  const handleFilter = useCallback(() => {
+    if (!debouncedSearch) {
+      setPosts(allPosts.current);
       return;
     }
 
-    const filtered = [...allPosts].filter((post) => {
+    const filtered = [...allPosts.current].filter((post) => {
       const { author, ...rest } = post;
       const combined = { ...rest, ...author };
 
       const values = Object.values(combined);
 
       return values.some((val) =>
-        String(val).toLowerCase().includes(inputValue)
+        String(val).toLowerCase().includes(debouncedSearch)
       );
     });
 
     setPosts(filtered);
-  };
+  }, [debouncedSearch]);
+
+  useEffect(() => {
+    handleFilter();
+  }, [debouncedSearch]);
 
   useEffect(() => {
     if (posts.length > 0 && !mounted.current) {
-      setAllPosts([...posts]);
+      allPosts.current = [...posts];
       mounted.current = true;
     }
   }, [posts]);
@@ -45,7 +50,7 @@ export function SearchBar() {
       name='search'
       leadIcon={<MagnifyingGlassIcon className='h-5 w-5 text-inherit' />}
       placeholder='Busca por contenido o por usuario...'
-      onChange={handleFilter}
+      onChange={(e) => setSearch(e.target.value.toLowerCase())}
     />
   );
 }
