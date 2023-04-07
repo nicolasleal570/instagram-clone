@@ -49,7 +49,13 @@ export function generateUsers(quantity = 10): User[] {
   return USERS;
 }
 
-export function generatePosts(users: User[], quantity = 10): Post[] {
+export function generatePosts(
+  customUsers?: User[],
+  quantity = 10,
+  usersQuantity = 10
+): Post[] {
+  const users = customUsers ?? generateUsers(usersQuantity);
+
   Array.from({ length: quantity }).forEach(() => {
     const randomAuthorIndex = faker.datatype.number({
       min: 0,
