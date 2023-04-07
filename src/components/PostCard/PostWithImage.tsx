@@ -1,27 +1,12 @@
 import { Link } from 'react-router-dom';
 import dayjs from 'dayjs';
-import { Cog6ToothIcon, MapPinIcon } from '@heroicons/react/24/outline';
-import { Post } from '../../types/models';
 import { StatusBadge } from './StatusBadge';
 import { PROFILE_URL } from '../../lib/routes';
-import { HeartIcon } from './HeartIcon';
-import { useAuth } from '../../hooks/useAuth';
+import { ActionButtons, ActionButtonsProps } from './ActionButtons';
 
-interface IPostWithImageProps {
-  post: Post;
-  haveLike: boolean;
-  handleLike: () => void;
-  handleEdit: () => void;
-}
+export type IPostWithImageProps = ActionButtonsProps;
 
-export function PostWithImage({
-  post,
-  haveLike,
-  handleLike,
-  handleEdit,
-}: IPostWithImageProps) {
-  const { currentUser } = useAuth();
-
+export function PostWithImage({ post, ...rest }: IPostWithImageProps) {
   return (
     <div className=''>
       <StatusBadge status={post.status} className='mb-4' />
@@ -59,29 +44,8 @@ export function PostWithImage({
         />
       </div>
       <div className='px-2 pt-2 text-gray-800 sm:px-0'>
-        <div className='flex items-center space-x-4'>
-          <button
-            type='button'
-            className='flex cursor-pointer items-center text-red-400 disabled:cursor-not-allowed disabled:text-gray-400'
-            onClick={handleLike}
-            disabled={post.status !== 'published'}
-          >
-            <HeartIcon haveLike={haveLike} />
-          </button>
+        <ActionButtons {...{ post, ...rest }} />
 
-          {currentUser?.username === post.author.username && (
-            <button
-              type='button'
-              className='cursor-pointer text-gray-600'
-              onClick={handleEdit}
-            >
-              <Cog6ToothIcon className='h-6 w-6 text-inherit' />
-            </button>
-          )}
-        </div>
-        <p className='block py-2 text-sm font-semibold'>
-          {post.likes?.length} Likes
-        </p>
         <p className='text-justify text-sm'>
           <Link to={PROFILE_URL(post.author.username)}>
             <span className='font-bold'>{post.author.username}</span>
