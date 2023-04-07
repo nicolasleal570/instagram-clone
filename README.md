@@ -16,6 +16,7 @@ La demo del proyecto puedes verla visitando [https://glistening-sunburst-fb3c17.
 - Perfil de usuarios
 - Agregar nueva publicación
 - Buscador de publicaciones
+- Generador de data fake
 
 Por otra parte se le hicieron **tests unitarios** a los componentes más importantes que afectaban el flujo principal de la aplicación.
 
