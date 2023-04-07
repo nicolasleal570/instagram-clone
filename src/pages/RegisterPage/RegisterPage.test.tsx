@@ -10,16 +10,19 @@ describe('Test Register page component', () => {
     getByRole('textbox', { name: 'surname' });
     getByRole('textbox', { name: 'username' });
     getByLabelText(/Selecciona tu foto de perfil/i);
-    getByText(/Entrar/i);
+
+    getByRole('button', { name: /Entrar/i });
     getByText(/Volver al feed/i);
     getByText(/Inicia sesión aquí/i);
   });
 
   test('Should display errors if form is empty', async () => {
     const mockOnSubmit = jest.fn();
-    const { getByText } = render(<RegisterPage mockOnSubmit={mockOnSubmit} />);
+    const { getByText, getByRole } = render(
+      <RegisterPage mockOnSubmit={mockOnSubmit} />
+    );
 
-    fireEvent.click(getByText(/Entrar/i));
+    fireEvent.click(getByRole('button', { name: /Entrar/i }));
 
     await waitFor(() => {
       getByText(/Debes ingresar un nombre válido/i);
@@ -30,13 +33,15 @@ describe('Test Register page component', () => {
   });
 
   test('Should display error if username is not valid', async () => {
-    const { getByText, getByPlaceholderText } = render(<RegisterPage />);
+    const { getByText, getByPlaceholderText, getByRole } = render(
+      <RegisterPage />
+    );
 
     fireEvent.change(getByPlaceholderText(/john_doe23/i), {
       target: { value: 'Hello world' },
     });
 
-    fireEvent.click(getByText(/Entrar/i));
+    fireEvent.click(getByRole('button', { name: /Entrar/i }));
 
     await waitFor(() => {
       getByText(/Debes ingresar un nombre de usuario válido/i);
@@ -57,9 +62,7 @@ describe('Test Register page component', () => {
 
   test('Should send the form', async () => {
     const mockOnSubmit = jest.fn();
-    const { getByText, getByRole } = render(
-      <RegisterPage mockOnSubmit={mockOnSubmit} />
-    );
+    const { getByRole } = render(<RegisterPage mockOnSubmit={mockOnSubmit} />);
 
     const nameInput = getByRole('textbox', { name: 'name' });
     const surnameInput = getByRole('textbox', { name: 'surname' });
@@ -77,7 +80,7 @@ describe('Test Register page component', () => {
       target: { value: 'john_doe23' },
     });
 
-    fireEvent.click(getByText(/Entrar/i));
+    fireEvent.click(getByRole('button', { name: /Entrar/i }));
 
     await waitFor(() => {
       expect(mockOnSubmit).toHaveBeenCalledTimes(1);
