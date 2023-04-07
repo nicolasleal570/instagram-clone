@@ -30,13 +30,21 @@ export interface PostContextType {
   removeLike: (postId: Post) => Promise<void>;
 }
 
-interface PostContextProviderProps {
+export type PostContextValueType = Partial<PostContextType>;
+
+export interface PostContextProviderProps {
   children: ReactNode;
+  value?: PostContextValueType;
 }
 
-export const PostContext = createContext<PostContextType | null>(null);
+export const PostContext = createContext<
+  PostContextType | Partial<PostContextType> | null
+>(null);
 
-export function PostContextProvider({ children }: PostContextProviderProps) {
+export function PostContextProvider({
+  children,
+  value,
+}: PostContextProviderProps) {
   const { currentUser } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [currentUserPosts, setCurrentUserPosts] = useState<Post[]>([]);
@@ -185,21 +193,23 @@ export function PostContextProvider({ children }: PostContextProviderProps) {
 
   return (
     <PostContext.Provider
-      value={{
-        posts,
-        currentUserPosts,
-        isCreateModalOpen,
-        editPost,
-        setPosts,
-        getPostsByUser,
-        getAllPosts,
-        setIsCreateModalOpen,
-        setEditPost,
-        createPost,
-        updatePost,
-        addLike,
-        removeLike,
-      }}
+      value={
+        value ?? {
+          posts,
+          currentUserPosts,
+          isCreateModalOpen,
+          editPost,
+          setPosts,
+          getPostsByUser,
+          getAllPosts,
+          setIsCreateModalOpen,
+          setEditPost,
+          createPost,
+          updatePost,
+          addLike,
+          removeLike,
+        }
+      }
     >
       {children}
     </PostContext.Provider>
