@@ -84,6 +84,7 @@ export function FileField({
             <img
               className='h-full w-full object-contain object-center'
               src={image}
+              alt='User avatar'
             />
           </div>
           <button

@@ -1,27 +1,18 @@
 import { fireEvent, render, waitFor } from '../../tests/setup';
+import userEvent from '@testing-library/user-event';
 import { RegisterPage } from './RegisterPage';
 
 describe('Test Register page component', () => {
-  test('Should render correctly', async () => {
+  test('Should render correctly', () => {
     const { getByText, getByRole, getByLabelText } = render(<RegisterPage />);
 
-    const nameInput = getByRole('textbox', { name: 'name' });
-    const surnameInput = getByRole('textbox', { name: 'surname' });
-    const usernameInput = getByRole('textbox', { name: 'username' });
-    const avatarInput = getByLabelText(/Selecciona tu foto de perfil/i);
-    const loginButton = getByText(/Entrar/i);
-    const backButton = getByText(/Volver al feed/i);
-    const signInLink = getByText(/Inicia sesión aquí/i);
-
-    await waitFor(() => {
-      expect(nameInput).toBeInTheDocument();
-      expect(surnameInput).toBeInTheDocument();
-      expect(usernameInput).toBeInTheDocument();
-      expect(avatarInput).toBeInTheDocument();
-      expect(loginButton).toBeInTheDocument();
-      expect(backButton).toBeInTheDocument();
-      expect(signInLink).toBeInTheDocument();
-    });
+    getByRole('textbox', { name: 'name' });
+    getByRole('textbox', { name: 'surname' });
+    getByRole('textbox', { name: 'username' });
+    getByLabelText(/Selecciona tu foto de perfil/i);
+    getByText(/Entrar/i);
+    getByText(/Volver al feed/i);
+    getByText(/Inicia sesión aquí/i);
   });
 
   test('Should display errors if form is empty', async () => {
@@ -30,15 +21,9 @@ describe('Test Register page component', () => {
     fireEvent.click(getByText(/Entrar/i));
 
     await waitFor(() => {
-      expect(getByText(/Debes ingresar un nombre válido/i)).toBeInTheDocument();
-
-      expect(
-        getByText(/Debes ingresar un apellido válido/i)
-      ).toBeInTheDocument();
-
-      expect(
-        getByText(/Debes ingresar un nombre de usuario válido/i)
-      ).toBeInTheDocument();
+      getByText(/Debes ingresar un nombre válido/i);
+      getByText(/Debes ingresar un apellido válido/i);
+      getByText(/Debes ingresar un nombre de usuario válido/i);
     });
   });
 
@@ -52,10 +37,20 @@ describe('Test Register page component', () => {
     fireEvent.click(getByText(/Entrar/i));
 
     await waitFor(() => {
-      expect(
-        getByText(/Debes ingresar un nombre de usuario válido/i)
-      ).toBeInTheDocument();
+      getByText(/Debes ingresar un nombre de usuario válido/i);
     });
+  });
+
+  test('Should upload an avatar', async () => {
+    const { getByLabelText, getByAltText } = render(<RegisterPage />);
+
+    const file = new File(['hello'], 'hello.png', { type: 'image/png' });
+
+    const fileInput = getByLabelText(/Selecciona tu foto de perfil/i);
+
+    await userEvent.upload(fileInput, file);
+
+    getByAltText(/User avatar/i);
   });
 
   test('Should send the form', async () => {
