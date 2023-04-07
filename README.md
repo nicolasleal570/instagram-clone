@@ -6,6 +6,8 @@ Fue desarrollada principalmente utilizando React con Typescript y consistió en 
 
 Para persistir los datos se utilizó el localStorage ya que la prueba no contemplaba el uso de una API externa.
 
+La demo del proyecto puedes verla visitando [https://glistening-sunburst-fb3c17.netlify.app/](https://glistening-sunburst-fb3c17.netlify.app/)
+
 ## Módulos de la aplicación
 
 - Inicio de sesión por nombre de usuario
