@@ -34,6 +34,12 @@ export function SearchBar() {
   }, [debouncedSearch]);
 
   useEffect(() => {
+    return () => {
+      handleFilter();
+    };
+  }, []);
+
+  useEffect(() => {
     if (allPosts.current.length > 0) {
       handleFilter();
     }

@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom';
 import { FEED_URL, LOGIN_URL } from '../../lib/routes';
 import { SearchBar } from '../SearchBar/SearchBar';
 import { UserMenu } from './UserMenu';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
 
 export function Navbar() {
   const { isLoggedIn } = useAuth();
+  const isMediumSize = useMediaQuery('(min-width: 768px)');
 
   return (
     <>
@@ -17,9 +19,11 @@ export function Navbar() {
             </h1>
           </Link>
 
-          <div className='hidden w-full md:block xl:mx-auto xl:w-[400px]'>
-            <SearchBar />
-          </div>
+          {isMediumSize && (
+            <div className='w-full xl:mx-auto xl:w-[400px]'>
+              <SearchBar />
+            </div>
+          )}
 
           <div className='ml-auto'>
             {!isLoggedIn ? (
@@ -37,11 +41,13 @@ export function Navbar() {
           </div>
         </div>
       </nav>
-      <div className='block w-full border-b border-gray-200 py-4 md:hidden'>
-        <div className='container'>
-          <SearchBar />
+      {!isMediumSize && (
+        <div className='w-full border-b border-gray-200 py-4'>
+          <div className='container'>
+            <SearchBar />
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 }
